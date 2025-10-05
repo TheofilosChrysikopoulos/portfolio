@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PLAYER_ONE — Game Dev Portfolio</title>
+  <meta name="description" content="Portfolio of a playful game developer — projects, skills and contact." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --muted:#9aa4b2;
+      --accent:#7ef9a6;
+      --accent-2:#6ec1ff;
+      --glass: rgba(255,255,255,0.035);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:18px;
+      --soft-shadow: 0 8px 30px rgba(2,6,23,0.5);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      transition: background 400ms ease;
+    }
+
+    .no-select { user-select: none; -webkit-user-select: none; -ms-user-select: none; }
+
+    .hero{ position:relative; height:100vh; display:flex; align-items:center; justify-content:center; padding:48px 20px 40px 20px; overflow:hidden; background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.4)); }
+    .hero-canvas { position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0; pointer-events:none; }
+
+    .hero-inner{ position:relative; z-index:2; max-width:1100px; width:100%; display:flex; gap:28px; align-items:center; justify-content:space-between; }
+
+    /* >>> Tighten hit areas so only actual text/elements block ripples <<< */
+    /* Make the big wrapper ignore clicks so gaps pass through to the canvas */
+    .hero-inner { pointer-events: none; }
+    /* Re-enable events ONLY on the actual text and controls */
+    .hero-inner a,
+    .hero-inner button,
+    .hero-inner .cta-btn,
+    .hero-inner .badge,
+    .hero-inner .headline,
+    .hero-inner .sub,
+    .hero-inner .small,
+    .hero-inner h1, .hero-inner h2, .hero-inner h3, .hero-inner h4, .hero-inner h5, .hero-inner h6,
+    .hero-inner p, .hero-inner span, .hero-inner strong, .hero-inner em,
+    /* Right card’s inner text blocks (labels & numbers) */
+    .hero-right > div > div > div,
+    /* Right card bottom paragraph */
+    .hero-right > div .small,
+    /* Scroll chevron remains interactive */
+    #scrollChev { pointer-events: auto; }
+
+    .hero-left{flex:1;min-width:260px} .hero-right{flex:1;display:flex;align-items:center;justify-content:center}
+    .headline{font-size:38px;line-height:1.02;margin:0 0 10px 0;font-weight:700} .sub{color:var(--muted);margin:0;margin-bottom:18px;font-size:15px}
+    .hero-cta{display:flex;gap:12px}
+    .cta-btn{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);padding:12px 14px;border-radius:12px;color:var(--accent-2);cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:10px}
+    .cta-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .chev{display:inline-block;margin-top:18px;cursor:pointer;color:var(--muted)}
+
+    .page{ max-width:1100px; margin:-120px auto 48px; position:relative; padding:28px; border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow:var(--soft-shadow); border:1px solid rgba(255,255,255,0.03); backdrop-filter: blur(6px) saturate(110%); }
+    .topbar{display:flex;align-items:center;gap:16px;justify-content:space-between;margin-bottom:18px;padding:6px 10px;border-radius:14px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .badge{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(126,249,166,0.95), rgba(110,193,255,0.9));font-family:'Press Start 2P',monospace;font-size:11px;color:#071522}
+    .controls{display:flex;gap:8px}
+    .content{display:grid;grid-template-columns:360px 1fr;gap:20px}.left{background:linear-gradient(180deg,var(--glass),var(--glass-2));padding:18px;border-radius:14px}.right{min-height:400px}.panel{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:18px;border-radius:12px;margin-bottom:16px}
+    .projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1200; }
+    .modal[aria-hidden="false"]{ display:flex; } .modal-backdrop{ position:absolute; inset:0; background:rgba(1,6,12,0.6); backdrop-filter: blur(3px); }
+    .modal-panel{ position:relative; z-index:2; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:18px; width:min(720px,92%); box-shadow:0 18px 60px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.03);}
+    .modal-close{ position:absolute; right:12px; top:10px; background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer; }
+    a{color:var(--accent-2);text-decoration:none} .small{color:var(--muted);font-size:13px}
+    @media (max-width:900px){ .hero-inner{flex-direction:column;align-items:flex-start} .content{grid-template-columns:1fr} .page{margin-top:-80px} }
+  </style>
+</head>
+<body>
+
+  <section class="hero" id="hero">
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <!-- <div class="badge" style="width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));font-family:'Press Start 2P',monospace;color:#071522">PX</div> -->
+          <div>
+            <h1 class="headline">THEOFILOS CHRYSIKOPOULOS</h1>
+            <!-- <p class="sub">I build editor tools, gameplay systems and chaotic-but-fun mechanics. I make bugs apologetic.</p> -->
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <a class="cta-btn" href="https://github.com/your-username" target="_blank" rel="noopener">
+            <img src="assets/github-mark.svg" alt="GitHub logo" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
+            GitHub
+          </a>
+          <a class="cta-btn cta-ghost" href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener">🔗 LinkedIn</a>
+        </div>
+
+        <div class="chev" id="scrollChev" aria-hidden>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.85"><path d="M6 9l6 6 6-6" /></svg>
+          <div class="small">Scroll to portfolio</div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div style="width:320px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 28px rgba(2,6,23,0.5)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">Experience</div>
+              <div style="font-weight:700;font-size:20px">2 years</div>
+            </div>
+            <div>
+              <!-- <div style="font-size:12px;color:var(--muted)">Builds</div>
+              <div style="font-weight:700;font-size:20px">4+</div> -->
+            </div>
+          </div>
+          <div class="small">Want tools that speed up level creation and don't explode at runtime? I make those.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="page" id="mainContent">
+    <div class="topbar">
+      <div class="logo"><div class="badge">PX</div><div><h3 style="margin:0">Theofilos Chrysikopoulos</h3><div class="small">Game Developer • Tools, Systems & Weird Mechanics</div></div></div>
+      <div class="controls"><a class="cta-btn" href="#projects">▶ Press Start</a></div>
+    </div>
+
+    <div class="content">
+      <aside class="left">
+        <div style="height:160px;border-radius:12px;background:linear-gradient(135deg,#061224 0%, rgba(14,24,38,0.9) 30%);display:grid;place-items:center;color:var(--accent);font-family:'Press Start 2P',monospace">Avatar</div>
+
+        <div style="margin-top:12px">
+          <div style="font-weight:700">Hi, I'm Theofilos — Systems & Tools Dev</div>
+          <div class="small">I build tools that make games feel alive (and less bug-ridden).</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center">
+            <div style="font-weight:700">2</div>
+            <div class="small">Years</div>
+          </div>
+          <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center">
+            <div style="font-weight:700">4+</div>
+            <div class="small">Released builds</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">Tech & Tools</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <div style="padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.03)">C# / Unity</div>
+            <div style="padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.03)">C++ / Godot</div>
+            <div style="padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.03)">Shaders</div>
+          </div>
+        </div>
+
+        <div style="margin-top:auto">
+          <a class="cta-btn" href="resume.pdf" download>Download Resume</a>
+          <div style="height:10px"></div>
+          <div class="small">Contact: <a href="mailto:alex@example.com">theofiloschry@gmail.com</a></div>
+        </div>
+      </aside>
+
+      <main class="right">
+        <section id="projects" class="panel">
+          <h2>Projects</h2>
+          <p class="small">Select a card for details. Live builds and code links included where possible.</p>
+          <div class="projects" id="projectsGrid">
+            <article class="panel project-card" data-title="Rogue Bots" data-desc="A modular enemy AI system for emergent behaviors." data-live="#" data-code="#">
+              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">ROGUE BOTS</div>
+              <h3 style="margin-top:8px">Rogue Bots</h3>
+              <p class="small">Modular AI for unpredictable encounters — ships with editor tooling and tests.</p>
+              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="#">Live</a><a class="cta-btn cta-ghost" href="#">Code</a></div>
+            </article>
+
+            <article class="panel project-card" data-title="Gizmo Workshop" data-desc="In-editor gizmos and snapping helpers." data-live="#" data-code="#">
+              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">GIZMO</div>
+              <h3 style="margin-top:8px">Gizmo Workshop</h3>
+              <p class="small">Editor extensions that speed up level creation by 4x (engine-agnostic approach).</p>
+              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="#">Demo</a><a class="cta-btn cta-ghost" href="#">Code</a></div>
+            </article>
+
+            <article class="panel project-card" data-title="Flux Engine" data-desc="Small ECS for rapid prototyping." data-live="#" data-code="#">
+              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">FLUX</div>
+              <h3 style="margin-top:8px">Flux Engine</h3>
+              <p class="small">Lightweight data-driven ECS with live-reload for quick iteration.</p>
+              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="#">Docs</a><a class="cta-btn cta-ghost" href="#">GitHub</a></div>
+            </article>
+
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>About</h2>
+          <p class="small">I'm a game-dev generalist who sneaks debugging tools into players' backpacks. I like projects where the rules are almost sensible and the chaos is intentional.</p>
+        </section>
+
+        <section class="panel">
+          <h2>Contact</h2>
+          <p class="small">Want to collaborate? Send a message: <a href="mailto:alex@example.com">theofiloschrys@gmail.com</a></p>
+        </section>
+
+      </main>
+    </div>
+  </article>
+
+  <div id="projectModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" aria-label="Close dialog" data-close>&times;</button>
+      <h3 id="modalTitle">Project Title</h3>
+      <p id="modalBody">Project description...</p>
+      <div style="margin-top:12px">
+        <a id="modalLive" class="cta-btn" href="#" target="_blank" rel="noopener">Live</a>
+        <a id="modalCode" class="cta-btn cta-ghost" href="#" target="_blank" rel="noopener">Code</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const canvas = document.getElementById('heroCanvas');
+    if(!canvas) { console.warn('heroCanvas not found'); return; }
+    const ctx = canvas.getContext('2d');
+
+    let cssW = 0, cssH = 0;
+    let ratio = window.devicePixelRatio || 1;
+
+    function resize(){
+      ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      cssW = Math.max(1, rect.width);
+      cssH = Math.max(1, rect.height);
+      const pxW = Math.floor(cssW * ratio);
+      const pxH = Math.floor(cssH * ratio);
+      if(canvas.width !== pxW) canvas.width = pxW;
+      if(canvas.height !== pxH) canvas.height = pxH;
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+    }
+    window.addEventListener('resize', resize);
+    window.addEventListener('load', resize);
+    setTimeout(resize, 120);
+
+    const stars = [];
+    const rockets = [];
+    const trails = [];
+
+    // ---------- ROCKET PATH HELPERS (NEW) ----------
+    function resetRocket(r){
+      r.a = Math.random() * 10 - 5          // [0,5]
+      r.b = Math.random() * 10 - 5          // [0,5]
+      r.C = (Math.random()-0.5);         // [-0.5, 0.5]
+      r.t = 0;                           // progress x in [0,1] (right -> left)
+      r.speed = 0.001 + Math.random()*0.002; // du per frame
+      r.margin = Math.max(80, r.w*0.8);  // offscreen padding
+      r.phase = Math.random()*Math.PI*2; // keep existing field (unused now)
+      r.nextTrail = 0;
+    }
+
+    function evalPath(r, u){
+      const m = r.margin || 100;
+      // X(u): starts off the right, exits off the left
+      const X = cssW + m - u*(cssW + 2*m);
+      // Y(u): map f to pixels (f in [-1..1] shifted by C)
+      const f = Math.sin(r.a*u) * Math.sin(r.b*u) + r.C;
+      const Y = (0.5 - 0.5 * f) * cssH;
+
+      // derivatives for tangent direction
+      const dXdu = - (cssW + 2*m);
+      const dYdu = -0.5 * cssH * (
+        r.a * Math.cos(r.a*u) * Math.sin(r.b*u) +
+        r.b * Math.sin(r.a*u) * Math.cos(r.b*u)
+      );
+      return { X, Y, dXdu, dYdu };
+    }
+
+    function initBackgroundParticles(){
+      stars.length = 0; rockets.length = 0; trails.length = 0;
+      const W = cssW || window.innerWidth;
+      const H = cssH || window.innerHeight;
+      for(let i=0;i<100;i++){
+        stars.push({ x: Math.random()*W, y: Math.random()*H, s: Math.random()*1.6+0.2, vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.04, hue: 200 + Math.random()*120 });
+      }
+      for(let i=0;i<10;i++){
+        const w = 36 + Math.random()*56;
+        const h = 12 + Math.random()*30;
+        const r = {
+          // position is derived from the path now; x/y will be set each frame
+          x: 0, y: 0,
+          w, h,
+          vx: -1, vy: 0,                 // placeholders; will be set from tangent each frame
+          hue: 20 + Math.random()*320,
+          phase: Math.random()*Math.PI*2,
+          nextTrail: 0
+        };
+        resetRocket(r);
+        // start each rocket somewhere along its path so they’re staggered
+        r.t = Math.random();
+        rockets.push(r);
+      }
+    }
+    initBackgroundParticles();
+
+    const ripples = [], traces = [], splashes = [];
+    const MAX_RIPPLES = 120, MAX_TRACES = 44, MAX_SPLASH = 400;
+    function spawnSmallRipple(cx, cy){
+      const duration = 1100 + Math.random()*900;
+      const maxR = 10 + Math.random()*20;
+      if(ripples.length > MAX_RIPPLES) ripples.shift();
+      ripples.push({ x: cx, y: cy, t0: performance.now(), duration, maxR });
+      const count = 3 + Math.floor(Math.random()*5);
+      for(let i=0;i<count;i++){
+        if(splashes.length > MAX_SPLASH) break;
+        const a = Math.random()*Math.PI*2;
+        const sp = 0.6 + Math.random()*1.4;
+        splashes.push({
+          x: cx + (Math.random()-0.5)*3,
+          y: cy + (Math.random()-0.5)*3,
+          vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+          start: performance.now(), life: 360 + Math.random()*520,
+          size: 0.6 + Math.random()*1.4, hue: 160 + Math.random()*80
+        });
+      }
+      if(traces.length > MAX_TRACES) traces.shift();
+      traces.push({ x: cx, y: cy, t0: performance.now(), life: 1600 + Math.random()*2400, r0: 3 + Math.random()*6 });
+    }
+
+    // interaction (unchanged; relies on pointer-events rules above)
+    let dragging = false, pointerId = null, lastPos = null;
+    const EMIT_INTERVAL = 120, MIN_DIST = 30;
+    const hero = document.getElementById('hero');
+
+    hero.addEventListener('pointerdown', (ev)=>{
+      if(!ev.target.closest('.hero-inner')){
+        try {
+          const s = window.getSelection && window.getSelection();
+          if(s && s.rangeCount) s.removeAllRanges();
+          if(document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
+        } catch(e){ /* ignore */ }
+      }
+      if(ev.target.closest('.hero-inner')) return;
+      ev.preventDefault();
+      document.body.classList.add('no-select');
+
+      dragging = true; pointerId = ev.pointerId;
+      lastPos = { x: ev.clientX, y: ev.clientY, tLastEmit: performance.now() };
+      const rect = canvas.getBoundingClientRect();
+      spawnSmallRipple(ev.clientX - rect.left, ev.clientY - rect.top);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp, { once:true });
+      window.addEventListener('pointercancel', onPointerUp, { once:true });
+    });
+
+    function onPointerMove(ev){
+      if(!dragging || ev.pointerId !== pointerId) return;
+      const rect = canvas.getBoundingClientRect();
+      const cssX = ev.clientX - rect.left, cssY = ev.clientY - rect.top;
+      const dx = ev.clientX - (lastPos?.x || ev.clientX), dy = ev.clientY - (lastPos?.y || ev.clientY);
+      const dist = Math.hypot(dx,dy);
+      const now = performance.now();
+      if(dist >= MIN_DIST || (now - (lastPos.tLastEmit||0) > EMIT_INTERVAL)){
+        spawnSmallRipple(cssX, cssY);
+        lastPos = { x: ev.clientX, y: ev.clientY, tLastEmit: now };
+      }
+    }
+    function onPointerUp(ev){
+      if(ev.pointerId && ev.pointerId !== pointerId) return;
+      dragging = false; pointerId = null; lastPos = null;
+      document.body.classList.remove('no-select');
+      window.removeEventListener('pointermove', onPointerMove);
+    }
+
+    // ---------- drawSimpleRocket: unchanged except used by new path/rotation ----------
+    function drawSimpleRocket(ctx, r){
+      const x = r.x, y = r.y, w = r.w, h = r.h;
+      const midY = y + h / 2;
+
+      const wingTop = h / 4;
+      const wingDown = 0.2;
+      const wingSide = h *0.8;
+
+      const bodyColor = `hsl(${Math.round(r.hue)}, 72%, 57%)`;
+      const borderColor = `rgba(0,0,0,0.22)`;
+      const wingColor = `hsl(${Math.round((r.hue + 18) % 360)}, 62%, 46%)`;
+
+      // rotation from current velocity (tangent)
+      const angleV = Math.atan2(r.vy || 0, r.vx || 0);
+      const rotation = angleV - Math.PI;
+
+      const cx = x + w / 2;
+      const cy = midY;
+
+      const noseLocal = { x: -w / 2, y: 0 };
+      const rearTopLocal = { x: w / 2, y: -h / 2 };
+      const rearBotLocal = { x: w / 2, y: h / 2 };
+
+      const t1 = { x: x + w * (2/3), y: midY + wingTop };
+      const t2 = { x: x + w * (1 + wingDown), y: midY + wingSide };
+      const t3 = { x: x + w * 0.9, y: midY + wingTop };
+      const b1 = { x: x + w * (2/3), y: midY - wingTop };
+      const b2 = { x: x + w * (1 + wingDown), y: midY - wingSide };
+      const b3 = { x: x + w * 0.9, y: midY - wingTop };
+
+      const toLocal = (p) => ({ x: p.x - cx, y: p.y - cy });
+
+      const t1L = toLocal(t1);
+      const t2L = toLocal(t2);
+      const t3L = toLocal(t3);
+      const b1L = toLocal(b1);
+      const b2L = toLocal(b2);
+      const b3L = toLocal(b3);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      ctx.imageSmoothingEnabled = false;
+
+      ctx.beginPath();
+      ctx.moveTo(noseLocal.x - 1.2, noseLocal.y);
+      ctx.lineTo(rearTopLocal.x + 2.2, rearTopLocal.y - 1.6);
+      ctx.lineTo(rearBotLocal.x + 2.2, rearBotLocal.y + 1.6);
+      ctx.closePath();
+      ctx.fillStyle = borderColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(noseLocal.x, noseLocal.y);
+      ctx.lineTo(rearTopLocal.x, rearTopLocal.y);
+      ctx.lineTo(rearBotLocal.x, rearBotLocal.y);
+      ctx.closePath();
+      ctx.fillStyle = bodyColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(t1L.x, t1L.y);
+      ctx.lineTo(t2L.x, t2L.y);
+      ctx.lineTo(t3L.x, t3L.y);
+      ctx.closePath();
+      ctx.fillStyle = wingColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(t1L.x + 2, t1L.y - 1);
+      ctx.lineTo(Math.max(t1L.x + 4, t2L.x - 6), t2L.y - (wingSide * 0.08));
+      ctx.lineTo(t3L.x - 2, t3L.y - 1);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(b1L.x, b1L.y);
+      ctx.lineTo(b2L.x, b2L.y);
+      ctx.lineTo(b3L.x, b3L.y);
+      ctx.closePath();
+      ctx.fillStyle = wingColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(b1L.x + 2, b1L.y + 1);
+      ctx.lineTo(Math.max(b1L.x + 4, b2L.x - 6), b2L.y + (wingSide * 0.08));
+      ctx.lineTo(b3L.x - 2, b3L.y + 1);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.025)';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // ---------- TRAIL EMISSION: anchor to rear along heading (small tweak) ----------
+    function emitTrailFromRocket(r, now){
+      if(now < r.nextTrail) return;
+
+      // rear point = center - dir * (w/2)
+      const rearX = r.cx - r.dirX * (r.w/2 + 6);
+      const rearY = r.cy - r.dirY * (r.w/2 + 0);
+
+      const count = 2 + Math.floor(Math.random()*3);
+      for(let i=0;i<count;i++){
+        trails.push({
+          x: rearX + (Math.random()-0.5)*3,
+          y: rearY + (Math.random()-0.5)*3,
+          vx: -r.dirX*0.6 + (Math.random()-0.5)*0.25,
+          vy: -r.dirY*0.6 + (Math.random()-0.5)*0.25,
+          start: now,
+          life: 700 + Math.random()*400,
+          size: 1 + Math.random()*2,
+          hue: 22 + Math.random()*30
+        });
+      }
+      r.nextTrail = now + 60 + Math.random()*120;
+      if(trails.length > 900) trails.splice(0, trails.length - 700);
+    }
+
+    // draw loop
+    function draw(now){
+      if(!cssW || !cssH){
+        const rect = canvas.getBoundingClientRect();
+        cssW = rect.width || cssW || window.innerWidth;
+        cssH = rect.height || cssH || window.innerHeight;
+      }
+      ctx.clearRect(0,0,cssW,cssH);
+
+      // bg
+      const g = ctx.createLinearGradient(0,0,cssW,cssH);
+      g.addColorStop(0,'rgba(8,16,28,0.12)');
+      g.addColorStop(1,'rgba(2,6,23,0.48)');
+      ctx.fillStyle = g; ctx.fillRect(0,0,cssW,cssH);
+
+      // stars (unchanged)
+      for(const s of stars){
+        s.x += s.vx; s.y += s.vy;
+        if(s.x < -40) s.x = cssW + 40; if(s.x > cssW + 40) s.x = -40;
+        if(s.y < -40) s.y = cssH + 40; if(s.y > cssH + 40) s.y = -40;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${s.hue},80%,70%,${0.45 + Math.sin(now/500 + s.x)*0.25})`;
+        ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // ---------- ROCKETS: follow f(x)=sin(a x) sin(b x)+C and face tangent ----------
+      for(const r of rockets){
+        // advance normalized x
+        r.t += r.speed;
+        if(r.t > 1){
+          resetRocket(r);
+        }
+
+        const { X, Y, dXdu, dYdu } = evalPath(r, r.t);
+
+        // velocity (pixels per frame) from derivative * du/dframe
+        r.vx = dXdu * r.speed;
+        r.vy = dYdu * r.speed;
+
+        // heading (unit)
+        const ang = Math.atan2(r.vy, r.vx);
+        r.dirX = Math.cos(ang);
+        r.dirY = Math.sin(ang);
+
+        // place sprite so that NOSE sits exactly on the curve point (X,Y)
+        // nose is at center + R(ang)*(-w/2,0) -> center = (X,Y) + R(ang)*(w/2,0)
+        r.cx = X + Math.cos(ang) * (r.w/2);
+        r.cy = Y + Math.sin(ang) * (r.w/2);
+        r.x  = r.cx - r.w/2;
+        r.y  = r.cy - r.h/2;
+
+        emitTrailFromRocket(r, now);
+
+        ctx.save();
+        drawSimpleRocket(ctx, r);
+        ctx.restore();
+      }
+
+      // trails (unchanged except spawn anchor above)
+      for(let i = trails.length - 1; i >= 0; i--){
+        const p = trails[i];
+        const elapsed = now - p.start;
+        if(!isFinite(elapsed) || elapsed >= p.life){ trails.splice(i,1); continue; }
+        const lifeT = 1 - (elapsed / p.life);
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.986; p.vy *= 0.99;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue},85%,62%,${0.65 * lifeT})`;
+        const rsize = Math.max(0.3, p.size * (0.6 + lifeT*0.9));
+        ctx.arc(p.x, p.y, rsize, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // ripples
+      for(let i = ripples.length - 1; i >= 0; i--){
+        const r = ripples[i];
+        const elapsed = now - r.t0;
+        const t = elapsed / r.duration;
+        if(isNaN(t) || !isFinite(t) || t >= 1){ ripples.splice(i,1); continue; }
+        const radius = Math.max(0, r.maxR * (1 - Math.pow(1 - t, 3)));
+        const alpha = Math.max(0, 1 - (t*t));
+        const lw = Math.max(0.1, 3 * (1 - t));
+        ctx.beginPath(); ctx.lineWidth = lw;
+        ctx.strokeStyle = `rgba(126,249,166,${0.5 * alpha})`;
+        ctx.arc(r.x, r.y, radius, 0, Math.PI*2);
+        ctx.stroke();
+        const coreR = Math.max(0, Math.min(6, radius*0.04));
+        ctx.beginPath(); ctx.fillStyle = `rgba(110,193,255,${0.025 * alpha})`;
+        ctx.arc(r.x, r.y, coreR, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // traces & splashes
+      for(let i = traces.length - 1; i >= 0; i--){
+        const tr = traces[i];
+        const elapsed = now - tr.t0;
+        const tt = elapsed / tr.life;
+        if(isNaN(tt) || !isFinite(tt) || tt >= 1){ traces.splice(i,1); continue; }
+        const rr = tr.r0 + tt * 60;
+        const a = Math.max(0, 0.18 * (1 - tt));
+        const lw = Math.max(0.1, 2 * (1 - tt));
+        ctx.beginPath(); ctx.lineWidth = lw;
+        ctx.strokeStyle = `rgba(110,193,255,${a * 0.7})`;
+        ctx.arc(tr.x, tr.y, Math.max(0, rr), 0, Math.PI*2);
+        ctx.stroke();
+      }
+      for(let i = splashes.length - 1; i >= 0; i--){
+        const p = splashes[i];
+        const elapsed = now - p.start;
+        if(isNaN(elapsed) || !isFinite(elapsed) || elapsed >= p.life){ splashes.splice(i,1); continue; }
+        const lifeT = 1 - (elapsed / p.life);
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.988; p.vy *= 0.988;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue},80%,70%,${0.9 * lifeT})`;
+        ctx.arc(p.x, p.y, Math.max(0.1, p.size * (0.6 + lifeT*0.7)), 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // vignette
+      const vg = ctx.createRadialGradient(cssW/2, cssH/2, Math.min(cssW,cssH)/6, cssW/2, cssH/2, Math.max(cssW,cssH));
+      vg.addColorStop(0,'rgba(0,0,0,0)');
+      vg.addColorStop(1,'rgba(0,0,0,0.30)');
+      ctx.fillStyle = vg; ctx.fillRect(0,0,cssW,cssH);
+
+      requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
+
+    let resizeTimer = null;
+    window.addEventListener('resize', ()=>{
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(()=>{ initBackgroundParticles(); }, 220);
+    });
+
+  })();
+
+  // modal & projects (unchanged)
+  (function(){
+    const modal = document.getElementById('projectModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody  = document.getElementById('modalBody');
+    const modalLive  = document.getElementById('modalLive');
+    const modalCode  = document.getElementById('modalCode');
+    let lastFocused = null;
+
+    function openModal({title='', body='', live='#', code='#'}){
+      lastFocused = document.activeElement;
+      modalTitle.textContent = title;
+      modalBody.textContent = body;
+      modalLive.href = live || '#';
+      modalCode.href = code || '#';
+      modal.setAttribute('aria-hidden','false');
+      document.documentElement.style.overflow = 'hidden';
+      modal.querySelector('.modal-close')?.focus();
+      document.addEventListener('focus', trapFocus, true);
+      document.addEventListener('keydown', onKeyDown);
+    }
+    function closeModal(){
+      modal.setAttribute('aria-hidden','true');
+      document.documentElement.style.overflow = '';
+      document.removeEventListener('focus', trapFocus, true);
+      document.removeEventListener('keydown', onKeyDown);
+      try{ lastFocused?.focus(); }catch(e){}
+    }
+    function trapFocus(e){ if(!modal.contains(e.target)){ e.stopPropagation(); modal.querySelector('.modal-close')?.focus(); } }
+    function onKeyDown(e){ if(e.key === 'Escape') closeModal(); }
+    modal.addEventListener('click', (e)=>{ if(e.target.hasAttribute('data-close')) closeModal(); });
+
+    window.showModal = function(title, body, {liveHref='#', codeHref='#'} = {}){ openModal({title, body, live: liveHref, code: codeHref}); };
+    window.hideModal = closeModal;
+
+    const grid = document.getElementById('projectsGrid');
+    if(grid){
+      grid.addEventListener('click', (e)=>{
+        const card = e.target.closest('.project-card'); if(!card) return;
+        const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Project';
+        const desc  = card.dataset.desc  || card.querySelector('p')?.textContent || '';
+        const live  = card.dataset.live || '#';
+        const code  = card.dataset.code || '#';
+        showModal(title, desc, { liveHref: live, codeHref: code });
+      });
+    }
+  })();
+
+  // scroll chevron
+  document.getElementById('scrollChev')?.addEventListener('click', ()=>document.getElementById('mainContent').scrollIntoView({behavior:'smooth'}));
+</script>
+
+</body>
+</html>
