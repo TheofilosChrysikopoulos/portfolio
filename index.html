@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PLAYER_ONE — Game Dev Portfolio</title>
+  <title>Theofilos Chrysikopoulos - Graphics Engineer Portfolio</title>
   <meta name="description" content="Portfolio of a playful game developer — projects, skills and contact." />
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/controllerLogo2.png" type="image/png">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 
@@ -38,10 +41,8 @@
 
     .hero-inner{ position:relative; z-index:2; max-width:1100px; width:100%; display:flex; gap:28px; align-items:center; justify-content:space-between; }
 
-    /* >>> Tighten hit areas so only actual text/elements block ripples <<< */
-    /* Make the big wrapper ignore clicks so gaps pass through to the canvas */
+    /* Tighten hit areas so only actual text/elements block ripples */
     .hero-inner { pointer-events: none; }
-    /* Re-enable events ONLY on the actual text and controls */
     .hero-inner a,
     .hero-inner button,
     .hero-inner .cta-btn,
@@ -51,11 +52,8 @@
     .hero-inner .small,
     .hero-inner h1, .hero-inner h2, .hero-inner h3, .hero-inner h4, .hero-inner h5, .hero-inner h6,
     .hero-inner p, .hero-inner span, .hero-inner strong, .hero-inner em,
-    /* Right card’s inner text blocks (labels & numbers) */
     .hero-right > div > div > div,
-    /* Right card bottom paragraph */
     .hero-right > div .small,
-    /* Scroll chevron remains interactive */
     #scrollChev { pointer-events: auto; }
 
     .hero-left{flex:1;min-width:260px} .hero-right{flex:1;display:flex;align-items:center;justify-content:center}
@@ -70,7 +68,17 @@
     .logo{display:flex;align-items:center;gap:12px}
     .logo .badge{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(126,249,166,0.95), rgba(110,193,255,0.9));font-family:'Press Start 2P',monospace;font-size:11px;color:#071522}
     .controls{display:flex;gap:8px}
-    .content{display:grid;grid-template-columns:360px 1fr;gap:20px}.left{background:linear-gradient(180deg,var(--glass),var(--glass-2));padding:18px;border-radius:14px}.right{min-height:400px}.panel{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:18px;border-radius:12px;margin-bottom:16px}
+    .content{display:grid;grid-template-columns:360px 1fr;gap:20px}
+
+    /* (1) Sidebar is a simple vertical stack with gap; no bottom-sticky behavior */
+    .left{
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      padding:18px;border-radius:14px;
+      display:flex;flex-direction:column;gap:12px;
+    }
+
+    .right{min-height:400px}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:18px;border-radius:12px;margin-bottom:16px}
     .projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
     .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1200; }
     .modal[aria-hidden="false"]{ display:flex; } .modal-backdrop{ position:absolute; inset:0; background:rgba(1,6,12,0.6); backdrop-filter: blur(3px); }
@@ -90,16 +98,19 @@
           <!-- <div class="badge" style="width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));font-family:'Press Start 2P',monospace;color:#071522">PX</div> -->
           <div>
             <h1 class="headline">THEOFILOS CHRYSIKOPOULOS</h1>
-            <!-- <p class="sub">I build editor tools, gameplay systems and chaotic-but-fun mechanics. I make bugs apologetic.</p> -->
           </div>
         </div>
 
         <div class="hero-cta">
-          <a class="cta-btn" href="https://github.com/your-username" target="_blank" rel="noopener">
-            <img src="assets/github-mark.svg" alt="GitHub logo" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
+          <a class="cta-btn" href="https://github.com/TheofilosChrysikopoulos" target="_blank" rel="noopener">
+            <!-- (3) Same icon, now with padded viewBox and overflow visible to avoid edge clipping -->
+            <svg width="20" height="20" viewBox="-1 -1 18 18" aria-hidden="true"
+                 style="vertical-align: middle; margin-right: 6px; flex:0 0 auto; overflow: visible; display:inline-block">
+              <path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.6c.4.07.55-.17.55-.38l-.01-1.33c-2.01.44-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.1 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.09.16 1.9.08 2.1.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.15.45.55.38A8 8 0 0 0 8 0Z"/>
+            </svg>
             GitHub
           </a>
-          <a class="cta-btn cta-ghost" href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener">🔗 LinkedIn</a>
+          <a class="cta-btn cta-ghost" href="https://www.linkedin.com/in/theofiloschrysikopoulos/" target="_blank" rel="noopener">🔗 LinkedIn</a>
         </div>
 
         <div class="chev" id="scrollChev" aria-hidden>
@@ -115,10 +126,7 @@
               <div style="font-size:12px;color:var(--muted)">Experience</div>
               <div style="font-weight:700;font-size:20px">2 years</div>
             </div>
-            <div>
-              <!-- <div style="font-size:12px;color:var(--muted)">Builds</div>
-              <div style="font-weight:700;font-size:20px">4+</div> -->
-            </div>
+            <div></div>
           </div>
           <div class="small">Want tools that speed up level creation and don't explode at runtime? I make those.</div>
         </div>
@@ -128,20 +136,30 @@
 
   <article class="page" id="mainContent">
     <div class="topbar">
-      <div class="logo"><div class="badge">PX</div><div><h3 style="margin:0">Theofilos Chrysikopoulos</h3><div class="small">Game Developer • Tools, Systems & Weird Mechanics</div></div></div>
+      <div class="logo">
+        <!-- Badge image as your logo -->
+        <div class="badge">
+          <img src="assets/controllerLogo2.png" alt="Personal logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">
+        </div>
+        <div><h3 style="margin:0">Theofilos Chrysikopoulos</h3><div class="small">Game Developer • Tools, Systems & Weird Mechanics</div></div>
+      </div>
       <div class="controls"><a class="cta-btn" href="#projects">▶ Press Start</a></div>
     </div>
 
     <div class="content">
       <aside class="left">
-        <div style="height:160px;border-radius:12px;background:linear-gradient(135deg,#061224 0%, rgba(14,24,38,0.9) 30%);display:grid;place-items:center;color:var(--accent);font-family:'Press Start 2P',monospace">Avatar</div>
+        <!-- (2) Avatar area with centered circular photo inside the original 160px box -->
+        <div style="height:160px;border-radius:12px;background:linear-gradient(135deg,#061224 0%, rgba(14,24,38,0.9) 30%);display:grid;place-items:center;">
+          <img src="assets/profilephoto2.jpg" alt="Portrait of Theofilos Chrysikopoulos"
+               style="width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;box-shadow:0 6px 18px rgba(0,0,0,0.35);">
+        </div>
 
-        <div style="margin-top:12px">
+        <div>
           <div style="font-weight:700">Hi, I'm Theofilos — Systems & Tools Dev</div>
           <div class="small">I build tools that make games feel alive (and less bug-ridden).</div>
         </div>
 
-        <div style="display:flex;gap:10px;margin-top:12px">
+        <div style="display:flex;gap:10px">
           <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center">
             <div style="font-weight:700">2</div>
             <div class="small">Years</div>
@@ -152,7 +170,7 @@
           </div>
         </div>
 
-        <div style="margin-top:12px">
+        <div>
           <h4 style="margin:0 0 8px 0">Tech & Tools</h4>
           <div style="display:flex;flex-wrap:wrap;gap:8px">
             <div style="padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.03)">C# / Unity</div>
@@ -161,8 +179,9 @@
           </div>
         </div>
 
-        <div style="margin-top:auto">
-          <a class="cta-btn" href="resume.pdf" download>Download Resume</a>
+        <!-- (1) Resume block: no margin-top:auto; spacing handled by parent gap -->
+        <div>
+          <a class="cta-btn" href="assets/Theofilos_CV.pdf" target="_blank" rel="noopener">View Resume</a>
           <div style="height:10px"></div>
           <div class="small">Contact: <a href="mailto:alex@example.com">theofiloschry@gmail.com</a></div>
         </div>
@@ -252,27 +271,23 @@
     const rockets = [];
     const trails = [];
 
-    // ---------- ROCKET PATH HELPERS (NEW) ----------
     function resetRocket(r){
-      r.a = Math.random() * 10 - 5          // [0,5]
-      r.b = Math.random() * 10 - 5          // [0,5]
-      r.C = (Math.random()-0.5);         // [-0.5, 0.5]
-      r.t = 0;                           // progress x in [0,1] (right -> left)
-      r.speed = 0.001 + Math.random()*0.002; // du per frame
-      r.margin = Math.max(80, r.w*0.8);  // offscreen padding
-      r.phase = Math.random()*Math.PI*2; // keep existing field (unused now)
+      r.a = Math.random() * 10 - 5
+      r.b = Math.random() * 10 - 5
+      r.C = (Math.random()-0.5);
+      r.t = 0;
+      r.speed = 0.001 + Math.random()*0.002;
+      r.margin = Math.max(80, r.w*0.8);
+      r.phase = Math.random()*Math.PI*2;
       r.nextTrail = 0;
     }
 
     function evalPath(r, u){
       const m = r.margin || 100;
-      // X(u): starts off the right, exits off the left
       const X = cssW + m - u*(cssW + 2*m);
-      // Y(u): map f to pixels (f in [-1..1] shifted by C)
       const f = Math.sin(r.a*u) * Math.sin(r.b*u) + r.C;
       const Y = (0.5 - 0.5 * f) * cssH;
 
-      // derivatives for tangent direction
       const dXdu = - (cssW + 2*m);
       const dYdu = -0.5 * cssH * (
         r.a * Math.cos(r.a*u) * Math.sin(r.b*u) +
@@ -292,16 +307,14 @@
         const w = 36 + Math.random()*56;
         const h = 12 + Math.random()*30;
         const r = {
-          // position is derived from the path now; x/y will be set each frame
           x: 0, y: 0,
           w, h,
-          vx: -1, vy: 0,                 // placeholders; will be set from tangent each frame
+          vx: -1, vy: 0,
           hue: 20 + Math.random()*320,
           phase: Math.random()*Math.PI*2,
           nextTrail: 0
         };
         resetRocket(r);
-        // start each rocket somewhere along its path so they’re staggered
         r.t = Math.random();
         rockets.push(r);
       }
@@ -332,7 +345,6 @@
       traces.push({ x: cx, y: cy, t0: performance.now(), life: 1600 + Math.random()*2400, r0: 3 + Math.random()*6 });
     }
 
-    // interaction (unchanged; relies on pointer-events rules above)
     let dragging = false, pointerId = null, lastPos = null;
     const EMIT_INTERVAL = 120, MIN_DIST = 30;
     const hero = document.getElementById('hero');
@@ -343,7 +355,7 @@
           const s = window.getSelection && window.getSelection();
           if(s && s.rangeCount) s.removeAllRanges();
           if(document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
-        } catch(e){ /* ignore */ }
+        } catch(e){ }
       }
       if(ev.target.closest('.hero-inner')) return;
       ev.preventDefault();
@@ -377,7 +389,6 @@
       window.removeEventListener('pointermove', onPointerMove);
     }
 
-    // ---------- drawSimpleRocket: unchanged except used by new path/rotation ----------
     function drawSimpleRocket(ctx, r){
       const x = r.x, y = r.y, w = r.w, h = r.h;
       const midY = y + h / 2;
@@ -390,7 +401,6 @@
       const borderColor = `rgba(0,0,0,0.22)`;
       const wingColor = `hsl(${Math.round((r.hue + 18) % 360)}, 62%, 46%)`;
 
-      // rotation from current velocity (tangent)
       const angleV = Math.atan2(r.vy || 0, r.vx || 0);
       const rotation = angleV - Math.PI;
 
@@ -473,11 +483,9 @@
       ctx.restore();
     }
 
-    // ---------- TRAIL EMISSION: anchor to rear along heading (small tweak) ----------
     function emitTrailFromRocket(r, now){
       if(now < r.nextTrail) return;
 
-      // rear point = center - dir * (w/2)
       const rearX = r.cx - r.dirX * (r.w/2 + 6);
       const rearY = r.cy - r.dirY * (r.w/2 + 0);
 
@@ -498,7 +506,6 @@
       if(trails.length > 900) trails.splice(0, trails.length - 700);
     }
 
-    // draw loop
     function draw(now){
       if(!cssW || !cssH){
         const rect = canvas.getBoundingClientRect();
@@ -507,13 +514,11 @@
       }
       ctx.clearRect(0,0,cssW,cssH);
 
-      // bg
       const g = ctx.createLinearGradient(0,0,cssW,cssH);
       g.addColorStop(0,'rgba(8,16,28,0.12)');
       g.addColorStop(1,'rgba(2,6,23,0.48)');
       ctx.fillStyle = g; ctx.fillRect(0,0,cssW,cssH);
 
-      // stars (unchanged)
       for(const s of stars){
         s.x += s.vx; s.y += s.vy;
         if(s.x < -40) s.x = cssW + 40; if(s.x > cssW + 40) s.x = -40;
@@ -524,9 +529,7 @@
         ctx.fill();
       }
 
-      // ---------- ROCKETS: follow f(x)=sin(a x) sin(b x)+C and face tangent ----------
       for(const r of rockets){
-        // advance normalized x
         r.t += r.speed;
         if(r.t > 1){
           resetRocket(r);
@@ -534,17 +537,13 @@
 
         const { X, Y, dXdu, dYdu } = evalPath(r, r.t);
 
-        // velocity (pixels per frame) from derivative * du/dframe
         r.vx = dXdu * r.speed;
         r.vy = dYdu * r.speed;
 
-        // heading (unit)
         const ang = Math.atan2(r.vy, r.vx);
         r.dirX = Math.cos(ang);
         r.dirY = Math.sin(ang);
 
-        // place sprite so that NOSE sits exactly on the curve point (X,Y)
-        // nose is at center + R(ang)*(-w/2,0) -> center = (X,Y) + R(ang)*(w/2,0)
         r.cx = X + Math.cos(ang) * (r.w/2);
         r.cy = Y + Math.sin(ang) * (r.w/2);
         r.x  = r.cx - r.w/2;
@@ -557,7 +556,6 @@
         ctx.restore();
       }
 
-      // trails (unchanged except spawn anchor above)
       for(let i = trails.length - 1; i >= 0; i--){
         const p = trails[i];
         const elapsed = now - p.start;
@@ -572,7 +570,6 @@
         ctx.fill();
       }
 
-      // ripples
       for(let i = ripples.length - 1; i >= 0; i--){
         const r = ripples[i];
         const elapsed = now - r.t0;
@@ -591,7 +588,6 @@
         ctx.fill();
       }
 
-      // traces & splashes
       for(let i = traces.length - 1; i >= 0; i--){
         const tr = traces[i];
         const elapsed = now - tr.t0;
@@ -618,7 +614,6 @@
         ctx.fill();
       }
 
-      // vignette
       const vg = ctx.createRadialGradient(cssW/2, cssH/2, Math.min(cssW,cssH)/6, cssW/2, cssH/2, Math.max(cssW,cssH));
       vg.addColorStop(0,'rgba(0,0,0,0)');
       vg.addColorStop(1,'rgba(0,0,0,0.30)');
@@ -637,7 +632,6 @@
 
   })();
 
-  // modal & projects (unchanged)
   (function(){
     const modal = document.getElementById('projectModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -685,7 +679,6 @@
     }
   })();
 
-  // scroll chevron
   document.getElementById('scrollChev')?.addEventListener('click', ()=>document.getElementById('mainContent').scrollIntoView({behavior:'smooth'}));
 </script>
 
