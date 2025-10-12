@@ -238,7 +238,7 @@
         <div>
           <a class="cta-btn" href="assets/Theofilos_CV.pdf" target="_blank" rel="noopener">View Resume</a>
           <div style="height:10px"></div>
-          <div class="small">Contact: <a href="mailto:alex@example.com">theofiloschry@gmail.com</a></div>
+          <div class="small">Contact: <a href="theofiloschry@gmail.com">theofiloschry@gmail.com</a></div>
         </div>
       </aside>
 
@@ -247,11 +247,42 @@
           <h2>Projects</h2>
           <p class="small">Select a card for details. Live builds and code links included where possible.</p>
           <div class="projects" id="projectsGrid">
-            <article class="panel project-card" data-title="ArGiBii" data-desc="A mobile game made in Unity to challenge only the tiltproof gamers." data-live="#" data-code="#">
-              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">ArGiBii</div>
+            <article class="panel project-card" data-title="ArGiBii" data-desc="ArGiBii is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/ArGiBii/index.html">
+              <img
+                src="assets/ArGiBii2.png"
+                alt="ArGiBii — mobile game screenshot"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:110px;
+                  border-radius:10px;
+                  object-fit:cover;     /* crop to fill without distortion */
+                  display:block;
+                  background:linear-gradient(135deg,#04263b,#07172b); /* subtle fallback if image fails */
+                "
+              />
               <h3 style="margin-top:8px">ArGiBii</h3>
               <p class="small">ArGiBii is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color.</p>
-              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="projects/ArGiBii/index.html">Live</a><a class="cta-btn cta-ghost" href="projects/ArGiBii/index.html">Code</a></div>
+              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="projects/ArGiBii/index.html" target="_blank" rel="noopener">Live</a></div>
+            </article>
+
+            <article class="panel project-card" data-title="Portal Simulation" data-desc="My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class." data-live="projects/portalSimulation/index.html">
+              <img
+                src="assets/PortalFig.PNG"
+                alt="Portal Simulation — Game screenshot"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:110px;
+                  border-radius:10px;
+                  object-fit:cover;     /* crop to fill without distortion */
+                  display:block;
+                  background:linear-gradient(135deg,#04263b,#07172b); /* subtle fallback if image fails */
+                "
+              />
+              <h3 style="margin-top:8px">Portal Simulation</h3>
+              <p class="small">My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class.</p>
+              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="projects/PortalSimulation/index.html" target="_blank" rel="noopener">Live</a></div>
             </article>
 
             <article class="panel project-card" data-title="Gizmo Workshop" data-desc="In-editor gizmos and snapping helpers." data-live="#" data-code="#">
@@ -293,7 +324,7 @@
       <p id="modalBody">Project description...</p>
       <div style="margin-top:12px">
         <a id="modalLive" class="cta-btn" href="#" target="_blank" rel="noopener">Live</a>
-        <a id="modalCode" class="cta-btn cta-ghost" href="#" target="_blank" rel="noopener">Code</a>
+        <!-- <a id="modalCode" class="cta-btn cta-ghost" href="#" target="_blank" rel="noopener">Code</a> -->
       </div>
     </div>
   </div>
@@ -700,7 +731,7 @@
       modalTitle.textContent = title;
       modalBody.textContent = body;
       modalLive.href = live || '#';
-      modalCode.href = code || '#';
+      //modalCode.href = code || '#';
       modal.setAttribute('aria-hidden','false');
       document.documentElement.style.overflow = 'hidden';
       modal.querySelector('.modal-close')?.focus();
