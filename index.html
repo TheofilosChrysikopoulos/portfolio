@@ -144,6 +144,72 @@
       flex: 1;
       background: rgba(230, 238, 248, 0.22); /* subtle line that fits your theme */
     }
+
+        /* Make each project card a column so the footer can sit flush at the bottom */
+    .project-card{
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* The row that contains the Demo button and the tech bubbles */
+    .project-meta{
+      display:flex;
+      flex-wrap:wrap;          /* allows the bubbles to wrap under the button */
+      gap:8px;
+      align-items:center;
+      margin-top:8px;
+
+      /* If you want this row stuck to the bottom of all cards, uncomment: */
+      /* margin-top:auto; */
+    }
+
+    /* Small, pill-shaped, non-link “bubbles” (don’t reuse .cta-btn) */
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      line-height:1;
+      color:var(--muted);
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      white-space:nowrap;       /* keeps “C# / Unity” together */
+    }
+
+    /* Keep Demo button visually dominant but at the same height */
+    .demo-btn{
+      padding:10px 12px;        /* slightly smaller than main .cta-btn */
+    }
+
+    /* (Optional) make the whole footer compact on small screens */
+    @media (max-width: 560px){
+      .project-meta{ gap:6px; }
+      .tag{ font-size:11px; padding:5px 8px; }
+      .demo-btn{ padding:9px 10px; }
+    }
+
+    .project-card { position: relative; }
+    .preview-video{
+      position:absolute;
+      inset:18px 18px auto 18px; /* align to image’s left/right padding (panel has 18px) */
+      width:calc(100% - 36px);
+      height:auto;
+      aspect-ratio: 16/9;          /* safe default; JS will size it to the image height */
+      object-fit:cover;
+      border-radius:10px;
+      opacity:0;
+      transform:scale(1);
+      transition:opacity 160ms ease, transform 180ms ease, box-shadow 180ms ease;
+      pointer-events:none;          /* keep image clickable */
+      background:linear-gradient(135deg,#04263b,#07172b);
+    }
+    .project-card:hover .preview-video{
+      opacity:1;
+      transform:scale(1.1);
+      box-shadow:0 12px 36px rgba(2,6,23,0.55);
+      z-index: 1;
+    }
+
   </style>
 </head>
 <body>
@@ -247,7 +313,35 @@
           <h2>Projects</h2>
           <p class="small">Select a card for details. Live builds and code links included where possible.</p>
           <div class="projects" id="projectsGrid">
-            <article class="panel project-card" data-title="RGBio" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/ArGiBii/index.html">
+
+            <article class="panel project-card" data-title="Diploma Project" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/RGBio/index.html" data-video="assets/">
+              <img
+                src="assets/Thesis.PNG"
+                alt="RGBio — mobile game screenshot"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:140px;
+                  border-radius:10px;
+                  object-fit:cover;     /* crop to fill without distortion */
+                  display:block;
+                  background:linear-gradient(135deg,#04263b,#07172b); /* subtle fallback if image fails */
+                "
+              />
+              <h3 style="margin-top:8px">AR Digital Twin App for Warehouse Management</h3>
+              <p class="small">Diploma Project — Developed a Unity AR application that enables users to register a digital twin of a warehouse, visualize it as a 3D point cloud, and simulate a virtual storage robot that autonomously navigates the environment while avoiding obstacles in real time.</p>
+              <div class="project-meta">
+                <span class="tag">Unity</span>
+                <span class="tag">AR</span>
+                <span class="tag">C#</span>
+                <span class="tag">HLSL</span>
+                <span class="tag">Digital Twin</span>
+                <span class="tag">Point Cloud</span>
+              </div>
+            </article>
+
+
+            <article class="panel project-card" data-title="RGBio" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/RGBio/index.html" data-video="assets/RGBioPreview.mp4">
               <img
                 src="assets/ArGiBii2.PNG"
                 alt="RGBio — mobile game screenshot"
@@ -263,10 +357,40 @@
               />
               <h3 style="margin-top:8px">RGBio</h3>
               <p class="small">RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color.</p>
-              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="projects/ArGiBii/index.html" target="_blank" rel="noopener">Live</a></div>
+              <div class="project-meta">
+                <a class="cta-btn demo-btn" href="projects/RGBio/index.html" target="_blank" rel="noopener">Demo</a>
+                <span class="tag">Unity</span>
+                <span class="tag">C#</span>
+                <span class="tag">HLSL</span>
+                <span class="tag">Android</span>
+              </div>
             </article>
 
-            <article class="panel project-card" data-title="Portal Simulation" data-desc="My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class." data-live="projects/PortalSimulation/index.html">
+            <article class="panel project-card" data-title="VR 3D World Creator" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/RGBio/index.html" data-video="assets/WorldCreatorPreview.mp4">
+              <img
+                src="assets/VR3DWorldCreator.jpeg"
+                alt="RGBio — mobile game screenshot"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:160px;
+                  border-radius:10px;
+                  object-fit:cover;     /* crop to fill without distortion */
+                  display:block;
+                  background:linear-gradient(135deg,#04263b,#07172b); /* subtle fallback if image fails */
+                "
+              />
+              <h3 style="margin-top:8px">VR 3D World Creator</h3>
+              <p class="small">A Unity VR app with the goal to provide a user-friendly interface that allows users to sculpt terrains, paint textures, and place 3D objects to build immersive virtual environments with natural, hands-on interactions.</p>
+              <div class="project-meta">
+                <span class="tag">Unity</span>
+                <span class="tag">VR</span>
+                <span class="tag">C#</span>
+                <span class="tag">HLSL</span>
+              </div>
+            </article>
+
+            <article class="panel project-card" data-title="Portal Simulation" data-desc="My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class." data-live="projects/PortalSimulation/index.html" data-video="assets/Portal_Preview.mp4">
               <img
                 src="assets/portalFig2.PNG"
                 alt="Portal Simulation — Game screenshot"
@@ -282,23 +406,37 @@
               />
               <h3 style="margin-top:8px">Portal Simulation</h3>
               <p class="small">My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class.</p>
-              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="projects/PortalSimulation/index.html" target="_blank" rel="noopener">Live</a></div>
+              <div class="project-meta">
+                <a class="cta-btn demo-btn" href="projects/PortalSimulation/index.html" target="_blank" rel="noopener">Demo</a>
+                <span class="tag">OpenGL</span>
+                <span class="tag">C++</span>
+                <span class="tag">GLSL</span>
+                <span class="tag">Shaders</span>
+              </div>
             </article>
 
-            <article class="panel project-card" data-title="Gizmo Workshop" data-desc="In-editor gizmos and snapping helpers." data-live="#" data-code="#">
-              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">GIZMO</div>
-              <h3 style="margin-top:8px">Gizmo Workshop</h3>
-              <p class="small">Editor extensions that speed up level creation by 4x (engine-agnostic approach).</p>
-              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="#">Demo</a><a class="cta-btn cta-ghost" href="#">Code</a></div>
+            <article class="panel project-card" data-title="Beyond Euclid" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="https://ieeevr.org/2024/program/3dui-contest/#1002" data-video="assets/BeyondEuclidPreview.mp4">
+              <img
+                src="assets/BeyondEuclid.PNG"
+                alt="RGBio — mobile game screenshot"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:150px;
+                  border-radius:10px;
+                  object-fit:cover;     /* crop to fill without distortion */
+                  display:block;
+                  background:linear-gradient(135deg,#04263b,#07172b); /* subtle fallback if image fails */
+                "
+              />
+              <h3 style="margin-top:8px">Beyond Euclid — IEEE VR Contest, Florida</h3>
+              <p class="small">Team Project — 🏆 Awarded Honorable Mention — Collaborated on an educational VR experience designed to teach the principles of spherical geometry through an engaging spaceship-themed environment and intuitive interactive mechanics.</p>
+              <div class="project-meta">
+                <span class="tag">Unity</span>
+                <span class="tag">VR</span>
+                <span class="tag">C#</span>
+              </div>
             </article>
-
-            <article class="panel project-card" data-title="Flux Engine" data-desc="Small ECS for rapid prototyping." data-live="#" data-code="#">
-              <div style="height:110px;border-radius:10px;background:linear-gradient(135deg,#04263b,#07172b);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Press Start 2P',monospace">FLUX</div>
-              <h3 style="margin-top:8px">Flux Engine</h3>
-              <p class="small">Lightweight data-driven ECS with live-reload for quick iteration.</p>
-              <div style="display:flex;gap:8px;margin-top:8px"><a class="cta-btn" href="#">Docs</a><a class="cta-btn cta-ghost" href="#">GitHub</a></div>
-            </article>
-
           </div>
         </section>
 
@@ -309,25 +447,25 @@
 
         <section class="panel">
           <h2>Contact</h2>
-          <p class="small">Want to collaborate? Send a message: <a href="mailto:alex@example.com">theofiloschrys@gmail.com</a></p>
+          <p class="small">Want to collaborate? Send a message: theofiloschrys@gmail.com</a></p>
         </section>
 
       </main>
     </div>
   </article>
 
-  <div id="projectModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <!-- <div id="projectModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-backdrop" data-close></div>
     <div class="modal-panel" role="document">
       <button class="modal-close" aria-label="Close dialog" data-close>&times;</button>
       <h3 id="modalTitle">Project Title</h3>
       <p id="modalBody">Project description...</p>
       <div style="margin-top:12px">
-        <a id="modalLive" class="cta-btn" href="#" target="_blank" rel="noopener">Live</a>
-        <!-- <a id="modalCode" class="cta-btn cta-ghost" href="#" target="_blank" rel="noopener">Code</a> -->
+        <a id="modalLive" class="cta-btn" href="#" target="_blank" rel="noopener">Demo</a>
+        <a id="modalCode" class="cta-btn cta-ghost" href="#" target="_blank" rel="noopener">Code</a>
       </div>
     </div>
-  </div>
+  </div> -->
 
 <script>
   (function(){
@@ -719,50 +857,60 @@
   })();
 
   (function(){
-    const modal = document.getElementById('projectModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody  = document.getElementById('modalBody');
-    const modalLive  = document.getElementById('modalLive');
-    const modalCode  = document.getElementById('modalCode');
-    let lastFocused = null;
+    const baseIsCoarse = window.matchMedia("(pointer:coarse)").matches;
 
-    function openModal({title='', body='', live='#', code='#'}){
-      lastFocused = document.activeElement;
-      modalTitle.textContent = title;
-      modalBody.textContent = body;
-      modalLive.href = live || '#';
-      //modalCode.href = code || '#';
-      modal.setAttribute('aria-hidden','false');
-      document.documentElement.style.overflow = 'hidden';
-      modal.querySelector('.modal-close')?.focus();
-      document.addEventListener('focus', trapFocus, true);
-      document.addEventListener('keydown', onKeyDown);
-    }
-    function closeModal(){
-      modal.setAttribute('aria-hidden','true');
-      document.documentElement.style.overflow = '';
-      document.removeEventListener('focus', trapFocus, true);
-      document.removeEventListener('keydown', onKeyDown);
-      try{ lastFocused?.focus(); }catch(e){}
-    }
-    function trapFocus(e){ if(!modal.contains(e.target)){ e.stopPropagation(); modal.querySelector('.modal-close')?.focus(); } }
-    function onKeyDown(e){ if(e.key === 'Escape') closeModal(); }
-    modal.addEventListener('click', (e)=>{ if(e.target.hasAttribute('data-close')) closeModal(); });
+    document.querySelectorAll(".project-card").forEach(card => {
+      const img = card.querySelector("img");
+      const live = card.getAttribute("data-live");       // e.g. "projects/RGBio/index.html"
+      const videoSrc = card.getAttribute("data-video");  // add this attribute on cards that have a preview
 
-    window.showModal = function(title, body, {liveHref='#', codeHref='#'} = {}){ openModal({title, body, live: liveHref, code: codeHref}); };
-    window.hideModal = closeModal;
+      if (img && live) {
+        img.style.cursor = "pointer";
+        img.addEventListener("click", () => {
+          // Use absolute URL format you requested, but relative will also work fine on GitHub Pages
+          window.open(live, "_blank", "noopener");
+        });
+      }
 
-    const grid = document.getElementById('projectsGrid');
-    if(grid){
-      grid.addEventListener('click', (e)=>{
-        const card = e.target.closest('.project-card'); if(!card) return;
-        const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Project';
-        const desc  = card.dataset.desc  || card.querySelector('p')?.textContent || '';
-        const live  = card.dataset.live || '#';
-        const code  = card.dataset.code || '#';
-        showModal(title, desc, { liveHref: live, codeHref: code });
-      });
-    }
+      // Only set up hover preview if a data-video is provided
+      if (!img || !videoSrc || baseIsCoarse) return;
+
+      // Create overlay video positioned over the image area
+      const vid = document.createElement("video");
+      vid.src = videoSrc;
+      vid.muted = true;
+      vid.loop = true;
+      vid.playsInline = true;
+      vid.preload = "metadata";
+      vid.className = "preview-video";
+
+      // Insert after <article> starts, so it overlays the image region
+      card.appendChild(vid);
+
+      // Size the overlay to exactly cover the image box
+      function syncSize(){
+        const rect = img.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        const padLeft = 18, padTop = 18; // panel padding already in your CSS
+        // Position within the card using inline styles to avoid layout changes elsewhere
+        vid.style.left = padLeft + "px";
+        vid.style.top = padTop + "px";
+        vid.style.width = (cardRect.width - padLeft*2) + "px";
+        vid.style.height = img.style.height || rect.height + "px";
+        vid.style.borderRadius = img.style.borderRadius || "10px";
+      }
+      syncSize();
+      window.addEventListener("resize", syncSize);
+
+      // Hover/focus to play; leave/blur to pause & reset
+      const play = () => vid.play().catch(()=>{});
+      const stop = () => { vid.pause(); try{ vid.currentTime = 0; }catch(e){}; };
+
+      card.addEventListener("mouseenter", play);
+      card.addEventListener("mouseleave", stop);
+      img.addEventListener("focus", play);
+      img.addEventListener("blur", stop);
+    });
   })();
 
   document.getElementById('scrollChev')?.addEventListener('click', ()=>document.getElementById('mainContent').scrollIntoView({behavior:'smooth'}));
