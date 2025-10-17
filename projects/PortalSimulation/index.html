@@ -1,74 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Portal Simulation • WebGL</title>
+  <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
+  <title>Portal Simulation • Web Demo</title>
+
+  <link rel="stylesheet" href="../../style.css">
+  <script defer src="../../script.js"></script>
+
   <style>
-    :root{color-scheme:dark light;--bg:#0c1116;--panel:#0f1520;--text:#e6edf3;--muted:#9fb0c0;--accent:#58a6ff}
-    html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
-    .container{max-width:1100px;margin:0 auto;padding:28px 16px 64px}
-    header.page{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-    header .title{display:flex;flex-direction:column;gap:4px}
-    header h1{margin:0;font-weight:700;font-size:clamp(22px,3.2vw,34px);letter-spacing:.2px}
-    header .subtitle{margin:0;color:var(--muted);font-size:14px}
-    .controls{display:flex;gap:10px}
-    .btn{appearance:none;border:1px solid #263345;background:#152033;color:var(--text);padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn:hover{background:#1b2a42}
+    :root {
+      --bg: #0b0d12;
+      --fg: #e8ecf1;
+      --muted: #a4afbf;
+      --card: #12161f;
+      --line: #1e2633;
+      --brand: #6cf0ff;
+      --accent: #7df1a8;
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    }
 
-    .stage-wrap{margin:18px 0 12px;display:grid;place-items:center}
-    .stage{width:1024px;height:768px;background:#000;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;overflow:hidden}
-    .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-    .overlay{pointer-events:none;position:absolute;inset:0;display:grid;place-items:center;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6);background:linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25));font-weight:700;letter-spacing:.2px;opacity:.9;transition:opacity .15s ease}
-    .overlay.hidden{opacity:0;pointer-events:none}
+    .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar a { text-decoration: none; color: var(--fg); opacity: .9; }
 
-    .info{margin-top:10px;color:var(--muted);font-size:14px;text-align:center}
-    section{background:var(--panel);border:1px solid #1b2636;border-radius:12px;padding:16px;margin-top:24px}
-    section h2{margin:0 0 8px;font-size:18px}
-    section p{margin:6px 0}
-    .kbd{font:600 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;padding:3px 6px;border-radius:6px;border:1px solid #263345;background:#111826;color:#cfe1ff}
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 12px; padding: 10px 14px;
+      color: var(--fg); text-decoration: none; cursor: pointer;
+      transition: transform .06s ease, border-color .2s ease;
+    }
+    .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
+
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 6px 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+
+    .taglist { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
+
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 900px) { .two, .three { grid-template-columns: 1fr; } }
+
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .card img, .card video { width: 100%; border-radius: 12px; display: block; }
+    .section-title { font-size: 20px; margin: 4px 0 12px; }
+    .footer { margin: 32px 0 12px; color: var(--muted); font-size: 14px; text-align: center; }
+
+    .hero, section.card, .footer { margin: 0; }
+    .hero + section.card, section.card + section.card, section.card + .footer {
+      margin-top: clamp(18px, 3vw, 40px);
+    }
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+
+    /* Toolbar placed BELOW the demo (RGBio-style) */
+    .demo-toolbar {
+      display: flex; gap: 8px; justify-content: space-between; align-items: center;
+      padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420;
+      border-radius: 12px;
+    }
+    .muted { color: var(--muted); font-size: 14px; }
+
+    /* Portal-specific */
+    .stage-wrap { margin: 12px 0 10px; display: grid; place-items: center; }
+    .stage {
+      width: 1024px; height: 768px; background: #000;
+      border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      position: relative; overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+    .overlay {
+      pointer-events: none; position: absolute; inset: 0;
+      display: grid; place-items: center; color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,.6);
+      background: linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25));
+      font-weight: 700; letter-spacing: .2px;
+      opacity: .9; transition: opacity .15s ease;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .info { margin-top: 8px; color: var(--muted); font-size: 14px; text-align: center; }
+
+    .kbd {
+      font: 600 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      padding: 3px 6px; border-radius: 6px;
+      border: 1px solid #263345; background: #111826; color: #cfe1ff;
+      display: inline-block; margin-right: 4px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="page">
-      <div class="title">
-        <h1>Portal Simulation</h1>
-        <p class="subtitle">WebGL build – click the window to play (W/A/S/D • Mouse • Space)</p>
+  <main class="project-page">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../../">← Back to Portfolio</a>
       </div>
-      <div class="controls">
-        <button class="btn" id="btnFullscreen">Fullscreen</button>
+      <div style="display:flex; gap:8px;">
+        <a class="btn primary" href="#about">About</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>Portal Simulation</h1>
+      <p class="subtitle">C++/OpenGL prototype (WebGL2 via Emscripten). Click to play — pointer lock and fullscreen supported.</p>
+      <div class="taglist">
+        <span class="tag">OpenGL</span><span class="tag">C++</span><span class="tag">GLSL</span><span class="tag">WebGL2</span>
       </div>
     </header>
 
-    <div class="stage-wrap">
-      <div class="stage" id="stage">
-        <iframe id="gameframe"
-                src="app/index.html"
-                title="Portal Simulation"
-                allow="fullscreen; gamepad; pointer-lock; keyboard-map"
-                allowfullscreen></iframe>
-        <div class="overlay" id="overlay">Click to play</div>
+    <!-- Demo -->
+    <section class="card" id="demo">
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <iframe id="gameframe"
+                  src="app/index.html"
+                  title="Portal Simulation"
+                  allow="fullscreen; gamepad; pointer-lock; keyboard-map"
+                  allowfullscreen></iframe>
+          <div class="overlay" id="overlay">Click to play</div>
+        </div>
       </div>
-    </div>
-    <div class="info">Esc releases pointer; Esc in fullscreen exits fullscreen first, then click the window to lock again.</div>
 
-    <section>
-      <h2>About this project</h2>
-      <p>
-        C++/OpenGL (WebGL2 via Emscripten) prototype with
-        <strong>shadow mapping</strong>, <strong>stencil-buffer portal masking</strong>, and
-        offscreen <strong>portal scene capture</strong>.
-      </p>
-      <p>
-        Controls:
-        <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> move,
-        <span class="kbd">Mouse</span> look, <span class="kbd">Space</span> jump.
-      </p>
+      <!-- Toolbar goes BELOW the demo now -->
+      <div class="demo-toolbar">
+        <span class="muted">Tip: Click inside the window to lock the pointer. Press <kbd class="kbd">Esc</kbd> to unlock / exit fullscreen.</span>
+        <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+      </div>
+      <div class="demo-toolbar">
+        <p>
+          Controls:
+          <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> move,
+          <span class="kbd">Mouse</span> look, <span class="kbd">L click</span> place blue portal / pick up cube, <span class="kbd">R click</span> place purple portal / throw cube if held, <span class="kbd">Space</span> jump, <span class="kbd">C</span>colldiers on/off.
+        </p>
+      </div>
     </section>
-  </div>
 
+    <!-- About -->
+    <section class="card" id="about">
+      <h2 class="section-title">About this project</h2>
+      <p>
+        I built this project for my 4th-year university course <strong>3D Graphics and Virtual Reality</strong>. 
+        The goal was to simulate a <strong>portal system</strong> inspired by the game <em>Portal</em>, featuring both the visual portal effect and basic physics 
+        that allow the player to walk and throw objects through the portals.
+      </p>
+
+      <p>
+        Beyond implementing the core requirements, I added a <strong>ray-casting system</strong> that lets the user place portals only on surfaces large enough to fit them. 
+        I also built a <strong>portal gun mechanic</strong> that enables grabbing and moving cubes around, similar to the original game. 
+        To support realistic interactions, I created a full <strong>collision detection and physics simulation system</strong> for rectangular boxes of arbitrary scale, 
+        so that both the player and objects could interact naturally with the environment.
+      </p>
+
+      <p>
+        All geometry, colliders, and physics behaviors were implemented from scratch. I wrote custom model loaders to import assets into the OpenGL environment, 
+        built object and collider classes, and implemented the entire shader pipeline—from basic lighting to the visual portal effect—using GLSL. 
+        Every effect, including reflections and lighting, was coded manually without the use of any external rendering frameworks.
+      </p>
+
+      <h4>What I learned</h4>
+      <p>
+        This project was my introduction to <strong>shaders</strong> and the inner workings of the graphics pipeline. 
+        I learned how the CPU communicates with the GPU and implemented fundamental shading algorithms such as Phong lighting. 
+        For an early graphics project, it turned out remarkably well—aside from a few small bugs (like imperfect collider shapes)—and earned me a 10/10 grade for the course.
+      </p>
+
+      <p><em>Note: This project was later ported to WebGL using Emscripten.</em></p>
+
+      <div class="grid two" style="margin-top:10px;">
+        <div>
+          <h3 class="section-title">Highlights</h3>
+          <ul>
+            <li>Blinn-Phong Shading</li>
+            <li>Portal visual effect shaders</li>
+            <li>Simple physics</li>
+            <li>Arbitrary scale box collision detection</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title">Tech</h3>
+          <ul>
+            <li>OpenGL</li>
+            <li>GLSL</li>
+            <li>C++</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
+  </main>
+
+  <!-- portal demo logic unchanged -->
   <script>
     (function () {
       const stage   = document.getElementById('stage');
@@ -89,7 +225,6 @@
         const { doc, canvas } = getInner();
         if (!doc) return;
 
-        // Hide default emscripten UI bits and disable scrolling in the iframe
         const hideCSS = doc.createElement('style');
         hideCSS.textContent = `
           #status, #controls, #output, #emscripten_logo { display:none !important; }
@@ -101,15 +236,12 @@
         if (canvas) {
           canvas.setAttribute('tabindex', '0');
 
-          // *** KEY FIX ***
-          // Listen INSIDE the iframe: click on canvas => focus + requestPointerLock + hide overlay
           canvas.addEventListener('mousedown', () => {
             try { canvas.focus(); } catch(e) {}
             if (canvas.requestPointerLock) { try { canvas.requestPointerLock(); } catch(e) {} }
             hideOverlay();
           });
 
-          // If pointer lock becomes active (Esc releases it), keep overlay in sync
           doc.addEventListener('pointerlockchange', () => {
             const locked = doc.pointerLockElement === canvas;
             if (locked) hideOverlay(); else showOverlay();
@@ -117,11 +249,9 @@
         }
       }
 
-      // Overlay helpers
       function hideOverlay(){ overlay.classList.add('hidden'); }
       function showOverlay(){ overlay.classList.remove('hidden'); }
 
-      // Fallback engage (clicking the frame border area)
       function engage() {
         const { canvas } = getInner();
         if (!canvas) return;
@@ -130,7 +260,6 @@
         hideOverlay();
       }
 
-      // Fullscreen while keeping WASD: fullscreen target = inner canvas if possible
       async function enterFullscreen() {
         const { canvas } = getInner();
         const target = canvas || frame;
@@ -142,17 +271,15 @@
         hideOverlay();
       }
 
-      // When exiting fullscreen, ensure subsequent click will re-focus canvas & relock
       function onFSChange() {
         const { doc, canvas } = getInner();
         const fsElem = document.fullscreenElement || document.webkitFullscreenElement ||
                        (doc && (doc.fullscreenElement || doc.webkitFullscreenElement));
         if (!fsElem && canvas) {
-          // exited fullscreen — next click on canvas will lock again (handled above)
+          // exited fullscreen — next click will lock again
         }
       }
 
-      // Parent-page reactions to pointer lock toggles inside the iframe
       function wireParentPointerLockSync() {
         const { doc, canvas } = getInner();
         if (!doc || !canvas) return;
@@ -162,11 +289,9 @@
         });
       }
 
-      // ----- Wire up events -----
-      stage.addEventListener('click', engage); // fallback if clicking the chrome around the canvas
+      stage.addEventListener('click', engage);
 
       frame.addEventListener('load', () => {
-        // Wait a tick so Module.canvas is populated
         setTimeout(() => {
           prepareInnerDocument();
           wireParentPointerLockSync();

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
+  <title>Diploma Project • AR App</title>
+
+  <!-- Use your site-wide CSS/JS if you have them at repo root -->
+  <link rel="stylesheet" href="../../style.css">
+  <script defer src="../../script.js"></script>
+
+  <!-- Minimal scoped styles so it still looks good if style.css changes -->
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --fg: #e8ecf1;
+      --muted: #a4afbf;
+      --card: #12161f;
+      --line: #1e2633;
+      --brand: #6cf0ff;
+      --accent: #7df1a8;
+    }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--fg); }
+    .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar a { text-decoration: none; color: var(--fg); opacity: .9; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--fg); text-decoration: none; transition: transform .06s ease, border-color .2s ease; }
+    .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 6px 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+    .taglist { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .demo-wrap { position: relative; background: #0a0f18; border: 1px solid var(--line); border-radius: 14px; overflow: clip; }
+    .demo-16x9 { aspect-ratio: 16 / 9; width: 100%; display: grid; place-items: center; }
+    .demo-16x9 iframe, .demo-16x9 canvas { width: 100%; height: 100%; border: 0; display: block; }
+    .demo-toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .card img, .card video { width: 100%; border-radius: 12px; display: block; }
+    .section-title { font-size: 20px; margin: 4px 0 12px; }
+    .footer { margin: 32px 0 12px; color: var(--muted); font-size: 14px; text-align: center; }
+    @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .three { grid-template-columns: 1fr; } }
+    .hero,
+    section.card,
+    .footer { margin: 0; } /* reset any inherited margins */
+
+    .hero + section.card,
+    section.card + section.card,
+    section.card + .footer {
+      margin-top: clamp(18px, 3vw, 40px); /* comfy on mobile, roomier on desktop */
+    }
+
+    /* (optional) a little breathing space above the first block if needed */
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+    .trailer-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .trailer-frame{
+      position: relative;
+      width: min(100%, 960px);
+      aspect-ratio: 16 / 9;              /* keeps a consistent player box */
+      border-radius: 12px;
+      overflow: hidden;                   /* clip poster/video corners */
+      box-shadow: 0 16px 48px rgba(0,0,0,.35);
+    }
+    .trailer-frame video{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block; border: 0;
+      background: #000;                   /* nice while loading */
+      object-fit: cover;                  /* video fills the box */
+    }
+    .trailer-poster{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;                  /* <-- poster fully covers, no letterboxing */
+      pointer-events: none;               /* clicks go to the video */
+      transition: opacity .2s ease;
+    }
+    .trailer-poster.hidden{ opacity: 0; }
+    .trailer-caption{
+      width: min(100%, 900px);
+      text-align:center; color: var(--muted); font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <main class="project-page">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../../">← Back to Portfolio</a>
+      </div>
+      <!-- Optional extra links per project -->
+      <div style="display:flex; gap:8px;">
+        <!-- Change href to APK/itch or repo deep link as needed -->
+        <a class="btn primary" href="#about">About</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>AR Digital Twin App for Warehouse Management</h1>
+      <p class="subtitle">My Diploma Project.</p>
+      <div class="taglist">
+        <span class="tag">Unity</span><span class="tag">AR</span><span class="tag">C#</span><span class="tag">HLSL</span><span class="tag">Digital Twin</span><span class="tag">Point Cloud</span>
+      </div>
+    </header>
+
+    <!-- Demo (use this block for RGBio and any web-playable build) -->
+     <!--
+    <section class="card" id="demo">
+      <div class="demo-wrap">
+        <!-- If your build is at projects/RGBio/app/index.html, set that as src
+        <div class="demo-16x9">
+          <iframe id="demoFrame" src="./app/index.html" allow="autoplay; fullscreen" loading="lazy" title="RGBio WebGL Demo"></iframe>
+        </div>
+        <div class="demo-toolbar">
+          <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to release pointer.</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="btnReload" type="button">Reload</button>
+            <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- If a project is VR/desktop-only, swap the section above with a video/trailer: -->
+    <section class="card">
+      <div class="trailer-wrap">
+        <div class="trailer-frame">
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            poster="../../assets/Thesis.PNG"   <!-- optional thumbnail; remove if you don't have it -->
+          >
+            <source src="../../assets/DiplomaProjectVid.mp4" type="video/mp4" />
+            Your browser doesn’t support HTML5 video.
+          </video>
+        </div>
+
+        <p class="trailer-caption">
+          <strong>Trailer:</strong> a quick look at virtual robot navigation, point cloud rendering and registration results and AR shadowing and occlusion methods.
+        </p>
+      </div>
+    </section>
+    <!-- About -->
+    <section class="card" id="about">
+      <h2 class="section-title">About this project</h2>
+      <p>
+        This was my Diploma Project—an <strong>AR Digital Twin application for warehouse management</strong>. 
+        The goal was to solve the challenges of controlling a storage robot through software. 
+        The previous approach, based on a 2D floor plan, suffered from accuracy issues and lacked real-time awareness of the warehouse layout.
+      </p>
+
+      <p>
+        I addressed those limitations by building an <strong>AR application</strong> that provides precise spatial tracking and 
+        real-time visualization of the environment. Key objectives included accurate registration of the Digital Twin, 
+        efficient rendering of a detailed point-cloud model on a standalone Meta Quest 3 (with limited GPU resources), 
+        environment detection and meshing for virtual interactions, and a virtual storage robot capable of navigation and pathfinding in mixed reality.
+      </p>
+
+      <p>
+        Additional focus areas included realistic <strong>AR occlusion</strong> and <strong>shadow casting</strong> to blend virtual objects with the physical space, 
+        along with intuitive interaction methods and UI that support a smooth user experience.
+      </p>
+
+      <h4>What I learned</h4>
+      <p>
+        I deepened my expertise in <strong>Unity</strong> and <strong>XR development</strong>, creating advanced shaders to overcome hardware limits while maintaining visual quality. 
+        A major challenge was integrating multiple tools and libraries—resolving compatibility issues and navigating large codebases to implement targeted changes. 
+        I also learned to use <strong>LLMs</strong> effectively in my workflow—not to replace problem-solving, but to understand their strengths and weaknesses and work more productively.
+      </p>
+
+      <div class="grid two" style="margin-top:10px;">
+        <div>
+          <h3 class="section-title">Highlights</h3>
+          <ul>
+            <li>AR Digital Twin system</li>
+            <li>Accurate registration & spatial tracking</li>
+            <li>Compute & geometry shaders</li>
+            <li>AR occlusion & shadow casting</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title">Tech</h3>
+          <ul>
+            <li>Unity 2022 LTS • URP • HLSL • C#</li>
+            <li>Meta Quest 3 •  Meta Scene Understanding API</li>
+            <li>Unity XR Toolkit</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
+  </main>
+
+  <script>
+    // Small helpers for the demo toolbar.
+    const frame = document.getElementById('demoFrame');
+    document.getElementById('btnReload')?.addEventListener('click', () => {
+      frame?.contentWindow?.location.reload();
+    });
+    document.getElementById('btnFullscreen')?.addEventListener('click', async () => {
+      const wrapper = frame?.closest('.demo-wrap');
+      if (!wrapper) return;
+      if (!document.fullscreenElement) {
+        await wrapper.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

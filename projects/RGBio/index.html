@@ -1,119 +1,392 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | RGBGame</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
+  <title>RGBio • Web Demo</title>
+
+  <link rel="stylesheet" href="../../style.css">
+  <script defer src="../../script.js"></script>
+
+  <!-- Minimal scoped styles so it still looks good if style.css changes -->
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --fg: #e8ecf1;
+      --muted: #a4afbf;
+      --card: #12161f;
+      --line: #1e2633;
+      --brand: #6cf0ff;
+      --accent: #7df1a8;
+    }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--fg); }
+    .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar a { text-decoration: none; color: var(--fg); opacity: .9; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--fg); text-decoration: none; transition: transform .06s ease, border-color .2s ease; }
+    .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 6px 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+    .taglist { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .demo-wrap { position: relative; background: #0a0f18; border: 1px solid var(--line); border-radius: 14px; overflow: clip; }
+    .demo-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    min-height: 240px;     /* while the game boots */
+    }
+    .demo-center iframe {
+    border: 0;
+    display: block;
+    /* Safety so it doesn’t overflow on very small screens */
+    max-width: 100%;
+    }
+    .demo-toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .card img, .card video { width: 100%; border-radius: 12px; display: block; }
+    .section-title { font-size: 20px; margin: 4px 0 12px; }
+    .footer { margin: 32px 0 12px; color: var(--muted); font-size: 14px; text-align: center; }
+    @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .three { grid-template-columns: 1fr; } }
+    #btnMute { width: 44px; justify-content: center; padding-inline: 10px; }
+    #btnMute span { line-height: 1; font-size: 18px; }
+    .hero,
+    section.card,
+    .footer { margin: 0; } /* reset any inherited margins */
+
+    .hero + section.card,
+    section.card + section.card,
+    section.card + .footer {
+    margin-top: clamp(18px, 3vw, 40px); /* comfy on mobile, roomier on desktop */
+    }
+
+    /* (optional) a little breathing space above the first block if needed */
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+  </style>
+</head>
+<body>
+  <main class="project-page">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../../">← Back to Portfolio</a>
       </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">RGBGame</div>
+      <!-- Optional extra links per project -->
+      <div style="display:flex; gap:8px;">
+        <!-- Change href to APK/itch or repo deep link as needed -->
+        <a class="btn primary" href="#about">About</a>
       </div>
     </div>
-    <script>
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+    <!-- Hero -->
+    <header class="hero">
+      <h1>RGBio</h1>
+      <p class="subtitle">Mobile tilt-skill game. This page includes a playable WebGL demo and details.</p>
+      <div class="taglist">
+        <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">HLSL</span><span class="tag">Android</span>
+      </div>
+    </header>
+
+    <!-- Demo (use this block for RGBio and any web-playable build) -->
+    <section class="card" id="demo">
+      <div class="demo-wrap">
+        <div class="demo-center">
+            <iframe
+            id="demoFrame"
+            src="./app/index.html"
+            title="RGBio WebGL Demo"
+            loading="lazy"
+            allow="autoplay; fullscreen; gamepad; xr-spatial-tracking"
+            scrolling="no"
+            style="overflow:hidden; width:1px; height:1px;"
+            ></iframe>
+        </div>
+        <div class="demo-toolbar">
+        <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to exit fullscreen. Inputs: A and D</span>
+        <div style="display:flex; gap:8px;">
+            <button class="btn" id="btnReload" type="button">Reload</button>
+            <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+            <button class="btn" id="btnMute" type="button" aria-pressed="false" aria-label="Mute">
+                <!-- icon swaps via JS -->
+                <span id="iconMuteOn" style="display:none;" aria-hidden="true">🔇</span>
+                <span id="iconMuteOff" aria-hidden="true">🔊</span>
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- If a project is VR/desktop-only, swap the section above with a video/trailer: -->
+    <!--
+    <section class="card">
+      <div class="grid two">
+        <video controls poster="../../assets/placeholder_poster.jpg"></video>
+        <div>
+          <h2 class="section-title">Trailer</h2>
+          <p class="muted">Short description of what to watch for in the video.</p>
+        </div>
+      </div>
+    </section>
+    -->
+
+    <!-- About -->
+    <section class="card" id="about">
+      <h2 class="section-title">About this project</h2>
+      <p>
+        I built this Android game in my third year in university. Three balls travel along a 3D curved road defined by a Bézier spline, and the player can rotate them around a shared center to dodge approaching obstacles. 
+      </p>
+
+      <p>
+        The balls Red, Green and Blue can pass through obstacles of the same color. The result is a skill-based experience that rewards quick decisions and feels especially satisfying when clearing difficult sequences.
+      </p>
+
+      <h4>What I learned</h4>
+      <p>
+        The toughest challenge was designing the physics: moving the balls smoothly along a changing spline while maintaining the illusion that “gravity” keeps them pinned to the track. 
+        I also dug into procedural mesh generation in Unity. I began with Sebastian Lague’s 
+        <a href="https://github.com/SebLague/Path-Creator" target="_blank" rel="noopener">Path Creator</a> and extended it for real-time road creation rather than offline level authoring. 
+        That process gave me valuable practice reading, understanding, and modifying another developer’s code. 
+        Finally, I built my first Shader Graph to support real-time mesh-deformation effects for the obstacle animation.
+      </p>
+
+      <div class="grid two" style="margin-top:10px;">
+        <div>
+          <h3 class="section-title">Highlights</h3>
+          <ul>
+            <li>Unity Fundamentals</li>
+            <li>Physics</li>
+            <li>Procedural Mesh creation</li>
+            <li>Animation</li>
+            <li>Particle System</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title">Tech</h3>
+          <ul>
+            <li>Unity 2021 • URP</li>
+            <li>Android</li>
+            <li>C#</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
+  </main>
+
+  <script>
+    const frame = document.getElementById('demoFrame');
+
+    // --- Receive messages from the iframe ---
+    window.addEventListener('message', (ev) => {
+        if (ev.source !== frame.contentWindow || !ev.data) return;
+
+        // Exact canvas size from inside the Unity page
+        if (ev.data.__unityCanvasSize__) {
+        const { w, h } = ev.data;
+        if (w > 0 && h > 0) {
+            frame.style.width  = w + 'px';
+            frame.style.height = h + 'px';
         }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
         }
-        updateBannerVisibility();
-      }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGL_Build.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/WebGL_Build.data",
-        frameworkUrl: buildUrl + "/WebGL_Build.framework.js",
-        codeUrl: buildUrl + "/WebGL_Build.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "RGBGame",
-        productVersion: "0.1",
-        showBanner: unityShowBanner,
-      };
+        // Mute state updates (to sync icon)
+        if (typeof ev.data.__unityMuted__ !== 'undefined') {
+        updateMuteIcon(!!ev.data.__unityMuted__);
+        }
+    });
 
-      // By default Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+    // --- Inject sizing cleanup (hide Unity footer + report canvas size) ---
+    function injectSizerAndCleanup() {
+        try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument || win.document;
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+        // Prevent internal scrollbars
+        if (doc?.documentElement) doc.documentElement.style.overflow = 'hidden';
+        if (doc?.body) doc.body.style.overflow = 'hidden';
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
+        // Hide Unity template footer/branding/buttons INSIDE the iframe
+        const style = doc.createElement('style');
+        style.textContent = `
+            #unity-footer, .unity-footer, #unityLogo, #unity-logo,
+            #unity-fullscreen-button, .unity-fullscreen-button,
+            #footer, .footer { display: none !important; }
+            html, body { overflow: hidden !important; }
+        `;
+        doc.head.appendChild(style);
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+        // Inject a helper to report the canvas size only
+        const s = doc.createElement('script');
+        s.id = 'unity-size-reporter';
+        s.textContent = `
+            (function () {
+            function canvasEl() {
+                return (
+                document.getElementById('unity-canvas') ||
+                (document.getElementById('unityContainer') && document.getElementById('unityContainer').querySelector('canvas')) ||
+                document.querySelector('#unity-container canvas') ||
+                document.querySelector('canvas')
+                );
+            }
+            function send() {
+                var c = canvasEl();
+                if (!c) return;
+                var r = c.getBoundingClientRect();
+                parent.postMessage({ __unityCanvasSize__: true, w: Math.round(r.width), h: Math.round(r.height) }, '*');
+            }
+            window.addEventListener('load', send);
+            send();
+            if (window.ResizeObserver) {
+                var c = canvasEl();
+                if (c) { var ro = new ResizeObserver(send); ro.observe(c); }
+            } else {
+                var tries = 0, id = setInterval(function () {
+                send();
+                if (++tries > 40) clearInterval(id);
+                }, 200);
+            }
+            window.addEventListener('resize', send);
+            })();
+        `;
+        doc.body.appendChild(s);
+        } catch { /* same-origin required; your setup is same-origin */ }
+    }
 
-        unityShowBanner('WebGL builds are not supported on mobile devices.');
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+    // --- Inject audio controller (mute/unmute WebAudio + media) ---
+    function injectAudioController() {
+        try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument || win.document;
 
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
+        const s = doc.createElement('script');
+        s.id = 'unity-audio-controller';
+        s.textContent = `
+            (function () {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            var state = { muted: false, contexts: new Set(), mediaEls: new Set() };
 
-      loadingBar.style.display = "block";
+            function addIfContext(x) {
+                try { if (AC && x && x instanceof AC) state.contexts.add(x); } catch (e) {}
+            }
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
+            // Try common Unity locations
+            if (window.unityInstance?.Module?.audioContext) addIfContext(window.unityInstance.Module.audioContext);
+            if (window.Module?.SDL2?.audioContext) addIfContext(window.Module.SDL2.audioContext);
+
+            // Best-effort scan of globals
+            try { for (var k in window) { addIfContext(window[k]); } } catch (e) {}
+
+            // Capture future AudioContexts too
+            if (AC && !AC.__wrapped) {
+                var OrigAC = AC;
+                var ProxyAC = new Proxy(OrigAC, { construct(target, args) {
+                var ctx = new target(...args);
+                try { state.contexts.add(ctx); } catch (e) {}
+                return ctx;
+                }});
+                ProxyAC.__wrapped = true;
+                window.AudioContext = ProxyAC;
+                if (window.webkitAudioContext) window.webkitAudioContext = ProxyAC;
+            }
+
+            // Track HTML media elements as a fallback
+            function trackMedia() {
+                document.querySelectorAll('audio,video').forEach(function(el){ state.mediaEls.add(el); });
+            }
+            trackMedia();
+            var mo = new MutationObserver(trackMedia);
+            mo.observe(document.documentElement, { childList: true, subtree: true });
+
+            async function setMuted(m) {
+                state.muted = !!m;
+                state.mediaEls.forEach(function(el){
+                try { el.muted = state.muted; if (state.muted) el.pause(); } catch(e){}
+                });
+                for (var ctx of state.contexts) {
+                try { state.muted ? await ctx.suspend() : await ctx.resume(); } catch(e){}
+                }
+                try { parent.postMessage({ __unityMuted__: state.muted }, '*'); } catch(e){}
+            }
+
+            window.__getMuted = function(){ return !!state.muted; };
+            window.__setMuted = function(m){ return setMuted(!!m); };
+
+            // Start unmuted; parent will toggle if needed
+            setMuted(false);
+            })();
+        `;
+        doc.body.appendChild(s);
+        } catch {}
+    }
+
+    // --- Initialize on iframe load ---
+    frame.addEventListener('load', () => {
+        injectSizerAndCleanup();
+        injectAudioController();
+    });
+
+    // --- Toolbar controls ---
+    // Reload
+    document.getElementById('btnReload')?.addEventListener('click', () => {
+        try { frame.contentWindow.location.reload(); } catch {}
+    });
+
+    // Fullscreen
+    document.getElementById('btnFullscreen')?.addEventListener('click', async () => {
+        try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument || win.document;
+        if (win && typeof win.unityInstance?.SetFullscreen === 'function') {
+            win.unityInstance.SetFullscreen(1);
+            return;
+        }
+        const canvas =
+            doc.getElementById('unity-canvas') ||
+            (doc.getElementById('unityContainer') && doc.getElementById('unityContainer').querySelector('canvas')) ||
+            doc.querySelector('#unity-container canvas') ||
+            doc.querySelector('canvas');
+        if (canvas?.requestFullscreen) await canvas.requestFullscreen();
+        else if (doc.documentElement.requestFullscreen) await doc.documentElement.requestFullscreen();
+        } catch {}
+    });
+
+    // Mute / Unmute
+    const btnMute = document.getElementById('btnMute');
+    const iconOn  = document.getElementById('iconMuteOn');  // 🔇
+    const iconOff = document.getElementById('iconMuteOff'); // 🔊
+
+    function updateMuteIcon(muted) {
+        if (!btnMute) return;
+        btnMute.setAttribute('aria-pressed', String(muted));
+        btnMute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+        if (iconOn)  iconOn.style.display  = muted ? '' : 'none';
+        if (iconOff) iconOff.style.display = muted ? 'none' : '';
+    }
+
+    btnMute?.addEventListener('click', async () => {
+        try {
+        const win = frame.contentWindow;
+        const getMuted = win.__getMuted;
+        const setMuted = win.__setMuted;
+        if (typeof setMuted !== 'function') return;
+        const isMuted = typeof getMuted === 'function' ? !!getMuted() : false;
+        await setMuted(!isMuted);
+        updateMuteIcon(!isMuted);
+        } catch {}
+    });
     </script>
-  </body>
+
+
+
+</body>
 </html>

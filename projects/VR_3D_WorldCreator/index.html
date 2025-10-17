@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
+  <title>VR 3D World Creator</title>
+
+  <!-- Use your site-wide CSS/JS if you have them at repo root -->
+  <link rel="stylesheet" href="../../style.css">
+  <script defer src="../../script.js"></script>
+
+  <!-- Minimal scoped styles so it still looks good if style.css changes -->
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --fg: #e8ecf1;
+      --muted: #a4afbf;
+      --card: #12161f;
+      --line: #1e2633;
+      --brand: #6cf0ff;
+      --accent: #7df1a8;
+    }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--fg); }
+    .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar a { text-decoration: none; color: var(--fg); opacity: .9; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--fg); text-decoration: none; transition: transform .06s ease, border-color .2s ease; }
+    .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 6px 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+    .taglist { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .demo-wrap { position: relative; background: #0a0f18; border: 1px solid var(--line); border-radius: 14px; overflow: clip; }
+    .demo-16x9 { aspect-ratio: 16 / 9; width: 100%; display: grid; place-items: center; }
+    .demo-16x9 iframe, .demo-16x9 canvas { width: 100%; height: 100%; border: 0; display: block; }
+    .demo-toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .card img, .card video { width: 100%; border-radius: 12px; display: block; }
+    .section-title { font-size: 20px; margin: 4px 0 12px; }
+    .footer { margin: 32px 0 12px; color: var(--muted); font-size: 14px; text-align: center; }
+    @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .three { grid-template-columns: 1fr; } }
+    .hero,
+    section.card,
+    .footer { margin: 0; } /* reset any inherited margins */
+
+    .hero + section.card,
+    section.card + section.card,
+    section.card + .footer {
+      margin-top: clamp(18px, 3vw, 40px); /* comfy on mobile, roomier on desktop */
+    }
+
+    /* (optional) a little breathing space above the first block if needed */
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+    .trailer-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .trailer-frame{
+      position: relative;
+      width: min(100%, 960px);
+      aspect-ratio: 16 / 9;              /* keeps a consistent player box */
+      border-radius: 12px;
+      overflow: hidden;                   /* clip poster/video corners */
+      box-shadow: 0 16px 48px rgba(0,0,0,.35);
+    }
+    .trailer-frame video{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block; border: 0;
+      background: #000;                   /* nice while loading */
+      object-fit: cover;                  /* video fills the box */
+    }
+    .trailer-poster{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;                  /* <-- poster fully covers, no letterboxing */
+      pointer-events: none;               /* clicks go to the video */
+      transition: opacity .2s ease;
+    }
+    .trailer-poster.hidden{ opacity: 0; }
+    .trailer-caption{
+      width: min(100%, 900px);
+      text-align:center; color: var(--muted); font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <main class="project-page">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../../">← Back to Portfolio</a>
+      </div>
+      <!-- Optional extra links per project -->
+      <div style="display:flex; gap:8px;">
+        <!-- Change href to APK/itch or repo deep link as needed -->
+        <a class="btn primary" href="#about">About</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>VR 3D World Creator</h1>
+      <p class="subtitle">Bring world creation to everyone with hands on a headset device.</p>
+      <div class="taglist">
+        <span class="tag">Unity</span><span class="tag">VR</span><span class="tag">C#</span><span class="tag">HLSL</span>
+      </div>
+    </header>
+
+    <!-- Demo (use this block for RGBio and any web-playable build) -->
+     <!--
+    <section class="card" id="demo">
+      <div class="demo-wrap">
+        <!-- If your build is at projects/RGBio/app/index.html, set that as src
+        <div class="demo-16x9">
+          <iframe id="demoFrame" src="./app/index.html" allow="autoplay; fullscreen" loading="lazy" title="RGBio WebGL Demo"></iframe>
+        </div>
+        <div class="demo-toolbar">
+          <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to release pointer.</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="btnReload" type="button">Reload</button>
+            <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- If a project is VR/desktop-only, swap the section above with a video/trailer: -->
+    <section class="card">
+      <div class="trailer-wrap">
+        <div class="trailer-frame">
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            poster="../../assets/VR3DWorldCreator.jpeg"   <!-- optional thumbnail; remove if you don't have it -->
+          >
+            <source src="../../assets/WorldCreator720.mp4" type="video/mp4" />
+            Your browser doesn’t support HTML5 video.
+          </video>
+        </div>
+
+        <p class="trailer-caption">
+          <strong>Trailer:</strong> a quick look at sculpting tools, texture painting,
+          and object placement inside the VR 3D World Creator.
+        </p>
+      </div>
+    </section>
+    <!-- About -->
+    <section class="card" id="about">
+      <h2 class="section-title">About this project</h2>
+      <p>
+        I built this project for fun—and out of frustration. Early on, I struggled to create attractive environments, and most terrain tools felt menu-heavy and unintuitive. 
+        My idea was a <strong>VR 3D World Creator</strong> that lets anyone build a world quickly with straightforward, tactile interactions, then explore it in first person.
+        The goal was an experience simple enough that even a newcomer could produce something beautiful.
+      </p>
+
+      <p>
+        This was my first VR project. I designed world-positioned UI panels that live in the user’s space and can be placed wherever they’re convenient, which also pushed me to get comfortable with Unity’s UI system.
+        For terrain, I implemented a marching-cubes pipeline powered by compute shaders, and wrote shaders to handle texture painting directly on the surface. 
+        I explored both procedural and manual approaches to object placement and shipped a lightweight tool for dropping models into the scene.
+        To support physics, I added a method that converts an arbitrary 3D model into a compressed set of convex shapes—ideal for efficient mesh colliders and aligned with Unity’s preference for convex hulls in physics and collision.
+      </p>
+
+      <h4>What I learned</h4>
+      <p>
+        I learned how to design VR-first interactions, build spatial UI, and balance visual fidelity with performance on VR hardware. 
+        Implementing marching cubes with compute shaders, for the terrain mesh, sharpened my understanding of GPU-driven workflows, while writing terrain/painting shaders improved my grasp of material systems. 
+        Extending the editor with custom placement tools—and implementing convex decomposition for colliders—taught me a lot about practical level-building pipelines and physics constraints in Unity.
+      </p>
+
+      <p>
+        The project is unfinished, but it stands as a proof of concept: creating a rich environment quickly and comfortably in VR is absolutely achievable.
+        Future goals include save/load for scenes, undo/redo, a larger model library, user model import, and additional terrain editing tools.
+      </p>
+
+      <div class="grid two" style="margin-top:10px;">
+        <div>
+          <h3 class="section-title">Highlights</h3>
+          <ul>
+            <li>UI Tools</li>
+            <li>Marching-Cubes based Terrain</li>
+            <li>3D Model compression • Convex hulls</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title">Tech</h3>
+          <ul>
+            <li>Unity 2021 • URP</li>
+            <li>C# • HLSL</li>
+            <li>Unity XR Toolkit</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
+  </main>
+
+  <script>
+    // Small helpers for the demo toolbar.
+    const frame = document.getElementById('demoFrame');
+    document.getElementById('btnReload')?.addEventListener('click', () => {
+      frame?.contentWindow?.location.reload();
+    });
+    document.getElementById('btnFullscreen')?.addEventListener('click', async () => {
+      const wrapper = frame?.closest('.demo-wrap');
+      if (!wrapper) return;
+      if (!document.fullscreenElement) {
+        await wrapper.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

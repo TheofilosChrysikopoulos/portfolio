@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
+  <title>Beyond Euclid • IEEE VR Contest</title>
+
+  <!-- Use your site-wide CSS/JS if you have them at repo root -->
+  <link rel="preload" as="image" href="../../assets/logo.png">
+  <link rel="stylesheet" href="../../style.css">
+  <script defer src="../../script.js"></script>
+
+  <!-- Minimal scoped styles so it still looks good if style.css changes -->
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --fg: #e8ecf1;
+      --muted: #a4afbf;
+      --card: #12161f;
+      --line: #1e2633;
+      --brand: #6cf0ff;
+      --accent: #7df1a8;
+    }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--fg); }
+    .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar a { text-decoration: none; color: var(--fg); opacity: .9; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--fg); text-decoration: none; transition: transform .06s ease, border-color .2s ease; }
+    .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
+    h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 6px 0 8px; letter-spacing: .3px; }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+    .taglist { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .demo-wrap { position: relative; background: #0a0f18; border: 1px solid var(--line); border-radius: 14px; overflow: clip; }
+    .demo-16x9 { aspect-ratio: 16 / 9; width: 100%; display: grid; place-items: center; }
+    .demo-16x9 iframe, .demo-16x9 canvas { width: 100%; height: 100%; border: 0; display: block; }
+    .demo-toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+    .card img, .card video { width: 100%; border-radius: 12px; display: block; }
+    .section-title { font-size: 20px; margin: 4px 0 12px; }
+    .footer { margin: 32px 0 12px; color: var(--muted); font-size: 14px; text-align: center; }
+    @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .three { grid-template-columns: 1fr; } }
+    .hero,
+    section.card,
+    .footer { margin: 0; } /* reset any inherited margins */
+
+    .hero + section.card,
+    section.card + section.card,
+    section.card + .footer {
+      margin-top: clamp(18px, 3vw, 40px); /* comfy on mobile, roomier on desktop */
+    }
+
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+
+    .trailer { padding: 18px; }
+    .trailer-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+    }
+
+    /* size: grow but stay responsive */
+    .trailer-frame{
+      width: min(100%, 960px);
+      max-height: 72vh;
+    }
+
+    /* responsive 16:9 wrapper for YouTube */
+    .trailer-16x9{
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+    .trailer-16x9 iframe{
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+      border-radius: 12px;
+      box-shadow: 0 16px 48px rgba(0,0,0,.35);
+    }
+
+    /* description under the video */
+    .trailer-caption{
+      width: min(100%, 900px);
+      text-align:center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <main class="project-page">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../../">← Back to Portfolio</a>
+      </div>
+      <!-- Optional extra links per project -->
+      <div style="display:flex; gap:8px;">
+        <a class="btn primary" href="#about">About</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>Beyond Euclid</h1>
+      <p class="subtitle">An Educational Virtual Reality Journey into Spherical Geometry.</p>
+      <div class="taglist">
+        <span class="tag">Unity</span><span class="tag">VR</span><span class="tag">C#</span>
+      </div>
+    </header>
+
+    <!-- Demo (use this block for RGBio and any web-playable build) -->
+     <!--
+    <section class="card" id="demo">
+      <div class="demo-wrap">
+        <div class="demo-16x9">
+          <iframe id="demoFrame" src="./app/index.html" allow="autoplay; fullscreen" loading="lazy" title="RGBio WebGL Demo"></iframe>
+        </div>
+        <div class="demo-toolbar">
+          <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to release pointer.</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="btnReload" type="button">Reload</button>
+            <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Trailer (YouTube embed) -->
+    <section class="card">
+      <div class="trailer-wrap">
+        <div class="trailer-frame">
+          <div class="trailer-16x9">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/LLQMcJ8qVNo?rel=0&modestbranding=1"
+              title="VR 3D World Creator — Trailer"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+        </div>
+
+        <p class="trailer-caption">
+          <strong>Trailer:</strong> a quick look at spherical geometry fundamentals and basic map projections on a space journey.
+          <noscript>Watch on <a href="https://youtu.be/LLQMcJ8qVNo">YouTube</a>.</noscript>
+        </p>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="card" id="about">
+      <h2 class="section-title">About this project</h2>
+      <p>
+        This project was developed for a <strong>VR IEEE contest</strong> held in Florida. The competition’s theme was to create a <strong>VR educational application</strong> 
+        that explains a mathematical concept. Working in a team of three and supported by our professor, we chose to explore <strong>spherical geometry</strong>.
+      </p>
+
+      <p>
+        Because spherical geometry is inherently three-dimensional, VR offered an ideal medium to visualize its fundamentals—lines, triangles, and comparisons with Euclidean geometry. 
+        The experience takes the user on a <strong>journey inside a spacecraft</strong>, where they first learn about the core differences between the two geometries 
+        and then explore a real-world application: <strong>map projections</strong>. 
+        The user sees how different projection methods affect how the Earth is represented, making it clear why airplanes follow curved paths across maps.
+      </p>
+
+      <h4>What I learned</h4>
+      <p>
+        This project taught me the importance of <strong>team communication</strong>, clear <strong>task division</strong>, and writing code that others can easily read and extend. 
+        My role focused on the <strong>mathematical and algorithmic components</strong>—implementing spherical geometry visualization, 
+        3D curved triangle meshes, and map projection logic. 
+        I also developed a <strong>VR interaction system</strong> where the user could draw geometric shapes on a virtual sphere positioned above their wrist using a stylus.
+      </p>
+
+      <p>
+        I contributed less to UI design, modeling, and puzzle-building, but the collaborative experience helped me understand how to merge different technical and creative workflows effectively.
+      </p>
+
+      <p>
+        The contest itself was an incredible experience. Each team presented their project at a booth where attendees could freely try the applications. 
+        Projects were evaluated on <em>Mathematical Concept, Execution, VR Interaction,</em> and <em>Visual Appearance</em>. 
+        Our project earned the <strong>Honorable Mention Award</strong>—a proud achievement that we brought back home to Europe as winners.
+      </p>
+
+      <div class="grid two" style="margin-top:10px;">
+        <div>
+          <h3 class="section-title">Highlights</h3>
+          <ul>
+            <li>Spherical Geometry</li>
+            <li>Map Projections</li>
+            <li>VR Interactions</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-title">Tech</h3>
+          <ul>
+            <li>Unity 2021 • URP</li>
+            <li>VR • Unity XR Toolkit</li>
+            <li>Meta Quest 3</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery (images or gifs) 
+    <section class="card" id="gallery">
+      <h2 class="section-title">Gallery</h2>
+      <div class="grid three">
+        <img src="../../assets/placeholder_1.jpg" alt="Screenshot 1" />
+        <img src="../../assets/placeholder_2.jpg" alt="Screenshot 2" />
+        <img src="../../assets/placeholder_3.jpg" alt="Screenshot 3" />
+      </div>
+    </section> -->
+
+    <section class="card" id="links">
+      <h2 class="section-title">Link</h2>
+      <ul>
+        <li><a href="https://ieeevr.org/2024/program/3dui-contest/#1002" target="_blank" rel="noopener">Contest Award</a></li>
+      </ul>
+    </section>
+
+    <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
+  </main>
+
+  <script>
+    // Small helpers for the demo toolbar.
+    const frame = document.getElementById('demoFrame');
+    document.getElementById('btnReload')?.addEventListener('click', () => {
+      frame?.contentWindow?.location.reload();
+    });
+    document.getElementById('btnFullscreen')?.addEventListener('click', async () => {
+      const wrapper = frame?.closest('.demo-wrap');
+      if (!wrapper) return;
+      if (!document.fullscreenElement) {
+        await wrapper.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

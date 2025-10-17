@@ -210,6 +210,27 @@
       z-index: 1;
     }
 
+    .left{ gap:20px; }                          /* overall vertical rhythm */
+
+    /* avatar -> tiny breathing room */
+    .left img{ margin-bottom:8px !important; }
+
+    /* stats tiles a touch larger without changing layout elsewhere */
+    .left > div > div[style*="text-align:center"]{
+      padding:14px !important;                  /* was 12 */
+      border-radius:14px;                       /* consistent rounding */
+    }
+
+    /* tech chips: a bit more spread */
+    .left div[style*="flex-wrap:wrap"]{ gap:10px !important; }
+    .left div[style*="flex-wrap:wrap"] > div{ padding:8px 12px !important; }
+
+    /* resume button only in the left card */
+    .left a.cta-btn{ padding:14px 16px; border-radius:14px; }
+
+    /* space between Resume and Contact (you can also delete the spacer <div>) */
+    .left div[style*="height:10px"]{ height:14px !important; }
+    .left a.cta-btn ~ .small{ margin-top:14px; display:block; }
   </style>
 </head>
 <body>
@@ -251,7 +272,7 @@
         <div class="badge">
           <img src="assets/controllerLogo2.png" alt="Personal logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">
         </div>
-        <div><h3 style="margin:0">Theofilos Chrysikopoulos</h3><div class="small">Game Developer • Tools, Systems & Weird Mechanics</div></div>
+        <div><h3 style="margin:0">Theofilos Chrysikopoulos</h3><div class="small">Game Developer • 3D Graphics, Shaders, XR</div></div>
       </div>
       <div class="controls"><a class="cta-btn" href="#projects">▶ Press Start</a></div>
     </div>
@@ -276,18 +297,18 @@
           />
 
         <div>
-          <div style="font-weight:700">Hi, I'm Theofilos — Systems & Tools Dev</div>
-          <div class="small">I build tools that make games feel alive (and less bug-ridden).</div>
+          <div style="font-weight:700">Hi, I'm Theofilos — 3D Graphics Dev</div>
+          <div class="small">Building any world with any physics and environment unlocks a potential I find incredible.</div>
         </div>
 
         <div style="display:flex;gap:10px">
           <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center">
-            <div style="font-weight:700">2</div>
-            <div class="small">Years</div>
+            <div style="font-weight:700">1.5</div>
+            <div class="small">Years of experience</div>
           </div>
           <div style="flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center">
-            <div style="font-weight:700">4+</div>
-            <div class="small">Released builds</div>
+            <div style="font-weight:700">1 🏆</div>
+            <div class="small">IEEE VR contest</div>
           </div>
         </div>
 
@@ -305,16 +326,19 @@
           <a class="cta-btn" href="assets/Theofilos_CV.pdf" target="_blank" rel="noopener">View Resume</a>
           <div style="height:10px"></div>
           <div class="small">Contact: <a href="theofiloschry@gmail.com">theofiloschry@gmail.com</a></div>
+          <div style="height:10px"></div>
+          <div class="small" style="margin-top:8px; opacity:0.7;">This website was built from scrath by myself and is HTML only.</div>
+          
         </div>
       </aside>
 
       <main class="right">
         <section id="projects" class="panel">
           <h2>Projects</h2>
-          <p class="small">Select a card for details. Live builds and code links included where possible.</p>
+          <p class="small">Select a card for details. Live builds included for non XR projects.</p>
           <div class="projects" id="projectsGrid">
 
-            <article class="panel project-card" data-title="Diploma Project" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/RGBio/index.html" data-video="assets/">
+            <article class="panel project-card" data-title="Diploma Project" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/DiplomaThesis/index.html" data-video="assets/DiplomaProjectPreview.mp4">
               <img
                 src="assets/Thesis.PNG"
                 alt="RGBio — mobile game screenshot"
@@ -358,7 +382,7 @@
               <h3 style="margin-top:8px">RGBio</h3>
               <p class="small">RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color.</p>
               <div class="project-meta">
-                <a class="cta-btn demo-btn" href="projects/RGBio/index.html" target="_blank" rel="noopener">Demo</a>
+                <a class="cta-btn demo-btn" href="projects/RGBio/index.html" target="_blank" rel="noopener">Play</a>
                 <span class="tag">Unity</span>
                 <span class="tag">C#</span>
                 <span class="tag">HLSL</span>
@@ -366,7 +390,7 @@
               </div>
             </article>
 
-            <article class="panel project-card" data-title="VR 3D World Creator" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/RGBio/index.html" data-video="assets/WorldCreatorPreview.mp4">
+            <article class="panel project-card" data-title="VR 3D World Creator" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/VR_3D_WorldCreator/index.html" data-video="assets/WorldCreatorPreview.mp4">
               <img
                 src="assets/VR3DWorldCreator.jpeg"
                 alt="RGBio — mobile game screenshot"
@@ -407,7 +431,7 @@
               <h3 style="margin-top:8px">Portal Simulation</h3>
               <p class="small">My first dive into OpenGL — a full portal simulation with working physics and collision for rectangular boxes. It might have a “legendary” function full of if-statements, but it still earned a perfect 10/10 and stood out as one of the most impressive projects in class.</p>
               <div class="project-meta">
-                <a class="cta-btn demo-btn" href="projects/PortalSimulation/index.html" target="_blank" rel="noopener">Demo</a>
+                <a class="cta-btn demo-btn" href="projects/PortalSimulation/index.html" target="_blank" rel="noopener">Play</a>
                 <span class="tag">OpenGL</span>
                 <span class="tag">C++</span>
                 <span class="tag">GLSL</span>
@@ -415,7 +439,7 @@
               </div>
             </article>
 
-            <article class="panel project-card" data-title="Beyond Euclid" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="https://ieeevr.org/2024/program/3dui-contest/#1002" data-video="assets/BeyondEuclidPreview.mp4">
+            <article class="panel project-card" data-title="Beyond Euclid" data-desc="RGBio is a mobile game made in Unity to challenge only the tiltproof gamers. You control three orbiting balls — red, green, and blue — Each ball can only pass through obstacles of its own color." data-live="projects/BeyondEuclid/index.html" data-video="assets/BeyondEuclidPreview.mp4"> <!--  https://ieeevr.org/2024/program/3dui-contest/#1002 -->
               <img
                 src="assets/BeyondEuclid.PNG"
                 alt="RGBio — mobile game screenshot"
@@ -442,7 +466,7 @@
 
         <section class="panel">
           <h2>About</h2>
-          <p class="small">I'm a game-dev generalist who sneaks debugging tools into players' backpacks. I like projects where the rules are almost sensible and the chaos is intentional.</p>
+          <p class="small">I’m a recent Electrical and Computer Engineering graduate with a deep passion for Game Development and 3D Graphics. I’m driven by the idea of crafting immersive worlds that inspire wonder and bring joy to those who explore them!</p>
         </section>
 
         <section class="panel">
