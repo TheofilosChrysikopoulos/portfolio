@@ -210,6 +210,22 @@
       z-index: 1;
     }
 
+    .project-card.is-inview .preview-video{
+      opacity: 1;
+      transform: scale(1.06);
+      box-shadow: 0 12px 36px rgba(2,6,23,0.55);
+      z-index: 1;
+    }
+
+    /* On touch devices, ignore accidental :hover effects some browsers emulate */
+    @media (pointer:coarse){
+      .project-card:hover .preview-video{
+        opacity: 0;
+        transform: scale(1);
+        box-shadow: none;
+      }
+}
+
     .left{ gap:20px; }                          /* overall vertical rhythm */
 
     /* avatar -> tiny breathing room */
@@ -880,60 +896,103 @@
 
   })();
 
-  (function(){
-    const baseIsCoarse = window.matchMedia("(pointer:coarse)").matches;
+  (function () {
+    const isNarrow = window.matchMedia("(max-width: 900px)");
+    const canHover = window.matchMedia("(hover: hover)");
+    const hasFinePointer = window.matchMedia("(any-pointer: fine)");
 
-    document.querySelectorAll(".project-card").forEach(card => {
+    // Boolean we’ll use instead of baseIsCoarse
+    const mobileAutoPreview = isNarrow.matches && !canHover.matches && !hasFinePointer.matches;
+
+    // If the environment changes (rotate tablet, attach/detach mouse), recompute
+    function updateMobileFlag() {
+      return isNarrow.matches && !canHover.matches && !hasFinePointer.matches;
+    }
+
+    document.querySelectorAll(".project-card").forEach((card) => {
       const img = card.querySelector("img");
-      const live = card.getAttribute("data-live");       // e.g. "projects/RGBio/index.html"
-      const videoSrc = card.getAttribute("data-video");  // add this attribute on cards that have a preview
+      const live = card.getAttribute("data-live");
+      const videoSrc = card.getAttribute("data-video");
 
+      // Make image open the live demo (as you already had)
       if (img && live) {
         img.style.cursor = "pointer";
         img.addEventListener("click", () => {
-          // Use absolute URL format you requested, but relative will also work fine on GitHub Pages
           window.open(live, "_self", "noopener");
         });
       }
 
-      // Only set up hover preview if a data-video is provided
-      if (!img || !videoSrc || baseIsCoarse) return;
+      // Need an image and a video source to proceed
+      if (!img || !videoSrc) return;
 
-      // Create overlay video positioned over the image area
+      // Create the overlay video for BOTH desktop and mobile
       const vid = document.createElement("video");
       vid.src = videoSrc;
-      vid.muted = true;
+      vid.muted = true;        // required for autoplay on mobile
       vid.loop = true;
-      vid.playsInline = true;
+      vid.playsInline = true;  // required for iOS autoplay
       vid.preload = "metadata";
       vid.className = "preview-video";
-
-      // Insert after <article> starts, so it overlays the image region
       card.appendChild(vid);
 
-      // Size the overlay to exactly cover the image box
-      function syncSize(){
+      // Position and size the overlay to match the image region
+      function syncSize() {
         const rect = img.getBoundingClientRect();
         const cardRect = card.getBoundingClientRect();
-        const padLeft = 18, padTop = 18; // panel padding already in your CSS
-        // Position within the card using inline styles to avoid layout changes elsewhere
+        const padLeft = 18, padTop = 18; // matches your panel padding
         vid.style.left = padLeft + "px";
         vid.style.top = padTop + "px";
-        vid.style.width = (cardRect.width - padLeft*2) + "px";
-        vid.style.height = img.style.height || rect.height + "px";
+        vid.style.width = cardRect.width - padLeft * 2 + "px";
+        // prefer the real measured height; fall back to any fixed style or a safe default
+        const measuredH = rect.height || parseFloat(img.style.height) || 140;
+        vid.style.height = measuredH + "px";
         vid.style.borderRadius = img.style.borderRadius || "10px";
       }
       syncSize();
       window.addEventListener("resize", syncSize);
 
-      // Hover/focus to play; leave/blur to pause & reset
-      const play = () => vid.play().catch(()=>{});
-      const stop = () => { vid.pause(); try{ vid.currentTime = 0; }catch(e){}; };
+      // Desktop: keep your hover/focus behavior
+      if (!mobileAutoPreview) {
+        // Desktop (or any device with hover/fine pointer): keep hover/focus behavior
+        const play = () => vid.play().catch(() => {});
+        const stop = () => { vid.pause(); try { vid.currentTime = 0; } catch (e) {} };
+        card.addEventListener("mouseenter", play);
+        card.addEventListener("mouseleave", stop);
+        img.addEventListener("focus", play);
+        img.addEventListener("blur", stop);
+      } else {
+        // Mobile-only autoplay while the card is in view
+        const play = () => vid.play().catch(() => {});
+        const stop = () => { vid.pause(); try { vid.currentTime = 0; } catch (e) {} };
 
-      card.addEventListener("mouseenter", play);
-      card.addEventListener("mouseleave", stop);
-      img.addEventListener("focus", play);
-      img.addEventListener("blur", stop);
+        let currentMobileFlag = mobileAutoPreview;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            // If the environment changed (e.g., user connected a mouse), bail to desktop behavior
+            const nowMobile = updateMobileFlag();
+            if (nowMobile !== currentMobileFlag && !nowMobile) {
+              // stop observing; desktop hover will take over on next load
+              observer.disconnect();
+              card.classList.remove("is-inview");
+              stop();
+              return;
+            }
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+                card.classList.add("is-inview");
+                play();
+              } else {
+                card.classList.remove("is-inview");
+                stop();
+              }
+            });
+          },
+          { threshold: [0, 0.6, 1] }
+        );
+
+        observer.observe(card);
+        requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
+      }
     });
   })();
 

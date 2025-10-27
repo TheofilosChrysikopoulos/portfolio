@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Prevent iOS text auto-zoom and allow proper responsive sizing -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <link rel="icon" href="../../assets/controllerLogo2.png" type="image/png">
   <title>Portal Simulation • Web Demo</title>
 
@@ -19,12 +20,15 @@
       --brand: #6cf0ff;
       --accent: #7df1a8;
     }
+
     html, body { height: 100%; }
+    html { -webkit-text-size-adjust: 100%; } /* stop iOS from auto-enlarging text */
     body {
       margin: 0;
       background: var(--bg);
       color: var(--fg);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden; /* guard against accidental horizontal scroll */
     }
 
     .project-page { max-width: 1100px; margin: 0 auto; padding: 24px; }
@@ -37,6 +41,7 @@
       border-radius: 12px; padding: 10px 14px;
       color: var(--fg); text-decoration: none; cursor: pointer;
       transition: transform .06s ease, border-color .2s ease;
+      white-space: nowrap;
     }
     .btn:hover { border-color: var(--brand); transform: translateY(-1px); }
     .btn.primary { background: linear-gradient(180deg, #162233, #121a28); border-color: #20324a; }
@@ -65,23 +70,27 @@
     }
     .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
 
-    /* Toolbar placed BELOW the demo (RGBio-style) */
-    .demo-toolbar {
-      display: flex; gap: 8px; justify-content: space-between; align-items: center;
-      padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420;
-      border-radius: 12px;
-    }
-    .muted { color: var(--muted); font-size: 14px; }
-
-    /* Portal-specific */
+    /* === Responsive Game Stage (4:3, fits phones) === */
     .stage-wrap { margin: 12px 0 10px; display: grid; place-items: center; }
     .stage {
-      width: 1024px; height: 768px; background: #000;
-      border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.45);
-      position: relative; overflow: hidden;
+      width: 100%;
+      /* Typical Emscripten builds target 1024x768 -> 4:3; keep that shape responsively */
+      aspect-ratio: 4 / 3;
+      max-height: 90vh;            /* don’t exceed the viewport height on phones */
+      background: #000;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      position: relative;
+      overflow: hidden;
       border: 1px solid var(--line);
     }
-    .stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+    .stage iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0; background: #000;
+      display: block;
+    }
+
     .overlay {
       pointer-events: none; position: absolute; inset: 0;
       display: grid; place-items: center; color: #fff;
@@ -89,6 +98,8 @@
       background: linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25));
       font-weight: 700; letter-spacing: .2px;
       opacity: .9; transition: opacity .15s ease;
+      text-align: center;
+      padding: 10px;
     }
     .overlay.hidden { opacity: 0; pointer-events: none; }
     .info { margin-top: 8px; color: var(--muted); font-size: 14px; text-align: center; }
@@ -98,6 +109,37 @@
       padding: 3px 6px; border-radius: 6px;
       border: 1px solid #263345; background: #111826; color: #cfe1ff;
       display: inline-block; margin-right: 4px;
+    }
+
+    /* === Toolbars below the demo; wrap and clamp on phones === */
+    .demo-toolbar {
+      display: flex; gap: 8px; align-items: center;
+      padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420;
+      border-radius: 12px; margin-top: 10px;
+      justify-content: space-between;
+      flex-wrap: wrap;               /* allow wrapping on narrow screens */
+    }
+    .demo-toolbar p, .demo-toolbar span {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 100%;
+      overflow-wrap: anywhere;       /* stop long tokens from overflowing */
+      line-height: 1.35;
+    }
+    .demo-toolbar .btn-group {
+      display: flex; gap: 8px; flex: 0 1 auto;
+    }
+
+    @media (max-width: 560px) {
+      .demo-toolbar { justify-content: center; }
+      .demo-toolbar .btn-group {
+        order: 1; width: 100%; justify-content: center;
+      }
+      .demo-toolbar p, .demo-toolbar span {
+        order: 2; flex: 1 1 100%; text-align: center; font-size: 13px;
+      }
+      .btn { padding: 8px 10px; font-size: 14px; }
     }
   </style>
 </head>
@@ -116,7 +158,7 @@
     <!-- Hero -->
     <header class="hero">
       <h1>Portal Simulation</h1>
-      <p class="subtitle">C++/OpenGL prototype (WebGL2 via Emscripten). Click to play — pointer lock and fullscreen supported.</p>
+      <p class="subtitle">C++/OpenGL prototype (WebGL2 via Emscripten). Tap/click to play — pointer lock and fullscreen supported.</p>
       <div class="taglist">
         <span class="tag">OpenGL</span><span class="tag">C++</span><span class="tag">GLSL</span><span class="tag">WebGL2</span>
       </div>
@@ -126,26 +168,38 @@
     <section class="card" id="demo">
       <div class="stage-wrap">
         <div class="stage" id="stage">
-          <iframe id="gameframe"
-                  src="app/index.html"
-                  title="Portal Simulation"
-                  allow="fullscreen; gamepad; pointer-lock; keyboard-map"
-                  allowfullscreen></iframe>
-          <div class="overlay" id="overlay">Click to play</div>
+          <iframe
+            id="gameframe"
+            src="app/index.html"
+            title="Portal Simulation"
+            loading="eager"
+            fetchpriority="high"
+            allow="fullscreen; gamepad; pointer-lock; keyboard-map; xr-spatial-tracking"
+            allowfullscreen
+          ></iframe>
+          <div class="overlay" id="overlay">
+            <div>
+              <div>Tap to play</div>
+              <div class="info" style="margin-top:6px; font-weight:400;">
+                Tip: On phones, you cannot play this.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Toolbar goes BELOW the demo now -->
+      <!-- Toolbar(s) below the demo -->
       <div class="demo-toolbar">
-        <span class="muted">Tip: Click inside the window to lock the pointer. Press <kbd class="kbd">Esc</kbd> to unlock / exit fullscreen.</span>
-        <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
-      </div>
-      <div class="demo-toolbar">
-        <p>
-          Controls:
+        <span>Controls:
           <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> move,
-          <span class="kbd">Mouse</span> look, <span class="kbd">L click</span> place blue portal / pick up cube, <span class="kbd">R click</span> place purple portal / throw cube if held, <span class="kbd">Space</span> jump, <span class="kbd">C</span>colldiers on/off.
-        </p>
+          <span class="kbd">Mouse</span> look,
+          <span class="kbd">L click</span> blue portal / pick up,
+          <span class="kbd">R click</span> purple portal / throw,
+          <span class="kbd">Space</span> jump, <span class="kbd">C</span> colliders on/off.
+        </span>
+        <div class="btn-group">
+          <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+        </div>
       </div>
     </section>
 
@@ -204,7 +258,7 @@
     <p class="footer">© Theofilos Chrysikopoulos — <a href="../../">Back to portfolio</a></p>
   </main>
 
-  <!-- portal demo logic unchanged -->
+  <!-- Minimal logic: keep game confined, pointer lock/fullscreen UX, tidy iframe -->
   <script>
     (function () {
       const stage   = document.getElementById('stage');
@@ -217,10 +271,15 @@
         if (!w) return {};
         const doc = w.document;
         const Module = w.Module || {};
-        const canvas = Module.canvas || (doc && doc.getElementById('canvas'));
+        // Common Emscripten canvas handles
+        const canvas = Module.canvas || (doc && (doc.getElementById('canvas') || doc.querySelector('canvas')));
         return { w, doc, Module, canvas };
       }
 
+      function hideOverlay(){ overlay.classList.add('hidden'); }
+      function showOverlay(){ overlay.classList.remove('hidden'); }
+
+      // Inject CSS into the emscripten page to remove default chrome and prevent scrollbars
       function prepareInnerDocument() {
         const { doc, canvas } = getInner();
         if (!doc) return;
@@ -229,13 +288,13 @@
         hideCSS.textContent = `
           #status, #controls, #output, #emscripten_logo { display:none !important; }
           html, body { margin:0!important; padding:0!important; height:100%; overflow:hidden!important; }
-          canvas { display:block; outline:none; }
+          canvas { display:block; outline:none; width:100% !important; height:100% !important; }
         `;
         doc.head.appendChild(hideCSS);
 
+        // Pointer lock UX
         if (canvas) {
           canvas.setAttribute('tabindex', '0');
-
           canvas.addEventListener('mousedown', () => {
             try { canvas.focus(); } catch(e) {}
             if (canvas.requestPointerLock) { try { canvas.requestPointerLock(); } catch(e) {} }
@@ -248,9 +307,6 @@
           });
         }
       }
-
-      function hideOverlay(){ overlay.classList.add('hidden'); }
-      function showOverlay(){ overlay.classList.remove('hidden'); }
 
       function engage() {
         const { canvas } = getInner();
@@ -271,15 +327,7 @@
         hideOverlay();
       }
 
-      function onFSChange() {
-        const { doc, canvas } = getInner();
-        const fsElem = document.fullscreenElement || document.webkitFullscreenElement ||
-                       (doc && (doc.fullscreenElement || doc.webkitFullscreenElement));
-        if (!fsElem && canvas) {
-          // exited fullscreen — next click will lock again
-        }
-      }
-
+      // Keep overlay hint in sync with pointer lock state
       function wireParentPointerLockSync() {
         const { doc, canvas } = getInner();
         if (!doc || !canvas) return;
@@ -289,17 +337,18 @@
         });
       }
 
+      // Clicking the stage engages the game on both desktop & mobile
       stage.addEventListener('click', engage);
 
+      // When the iframe loads, tidy its internal layout
       frame.addEventListener('load', () => {
+        // small delay to ensure Emscripten has attached its DOM
         setTimeout(() => {
           prepareInnerDocument();
           wireParentPointerLockSync();
         }, 60);
       });
 
-      document.addEventListener('fullscreenchange', onFSChange);
-      document.addEventListener('webkitfullscreenchange', onFSChange);
       btnFS.addEventListener('click', enterFullscreen);
     })();
   </script>

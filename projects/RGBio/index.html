@@ -33,19 +33,8 @@
     .tag { font-size: 12px; padding: 6px 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; background: #0f1420; }
     .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
     .demo-wrap { position: relative; background: #0a0f18; border: 1px solid var(--line); border-radius: 14px; overflow: clip; }
-    .demo-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    min-height: 240px;     /* while the game boots */
-    }
-    .demo-center iframe {
-    border: 0;
-    display: block;
-    /* Safety so it doesn’t overflow on very small screens */
-    max-width: 100%;
-    }
+    .demo-center { display: flex; align-items: center; justify-content: center; padding: 8px; min-height: 240px; }
+    .demo-center iframe { border: 0; display: block; max-width: 100%; }
     .demo-toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); background: #0f1420; }
     .muted { color: var(--muted); font-size: 14px; }
     .grid { display: grid; gap: 16px; }
@@ -58,18 +47,31 @@
     @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .three { grid-template-columns: 1fr; } }
     #btnMute { width: 44px; justify-content: center; padding-inline: 10px; }
     #btnMute span { line-height: 1; font-size: 18px; }
-    .hero,
-    section.card,
-    .footer { margin: 0; } /* reset any inherited margins */
+    .hero, section.card, .footer { margin: 0; }
+    .hero + section.card, section.card + section.card, section.card + .footer { margin-top: clamp(18px, 3vw, 40px); }
+    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
 
-    .hero + section.card,
-    section.card + section.card,
-    section.card + .footer {
-    margin-top: clamp(18px, 3vw, 40px); /* comfy on mobile, roomier on desktop */
+    /* Toolbar wraps cleanly on small screens */
+    .demo-toolbar { flex-wrap: wrap; }
+    .demo-toolbar .btn-group { display: flex; gap: 8px; flex: 0 1 auto; }
+    .demo-toolbar .muted { flex: 1 1 260px; min-width: 200px; }
+    @media (max-width: 520px){
+      .demo-toolbar { justify-content: center; }
+      .demo-toolbar .btn-group { order: 1; width: 100%; justify-content: center; }
+      .demo-toolbar .muted { order: 2; flex: 1 1 100%; text-align: center; font-size: 12px; }
+      .btn { padding: 8px 10px; font-size: 14px; }
+      #btnMute { width: auto; padding-inline: 10px; }
     }
 
-    /* (optional) a little breathing space above the first block if needed */
-    .project-page .hero { margin-top: clamp(8px, 1vw, 16px); }
+    /* Responsive iframe: good shape before Unity reports */
+    #demoFrame {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;   /* fallback until first message sets exact aspect */
+      min-height: 240px;
+      display: block;
+      max-height: 90vh;       /* visual safety cap */
+    }
   </style>
 </head>
 <body>
@@ -79,9 +81,7 @@
       <div style="display:flex; gap:8px; align-items:center;">
         <a class="btn" href="../../">← Back to Portfolio</a>
       </div>
-      <!-- Optional extra links per project -->
       <div style="display:flex; gap:8px;">
-        <!-- Change href to APK/itch or repo deep link as needed -->
         <a class="btn primary" href="#about">About</a>
       </div>
     </div>
@@ -95,48 +95,34 @@
       </div>
     </header>
 
-    <!-- Demo (use this block for RGBio and any web-playable build) -->
+    <!-- Demo -->
     <section class="card" id="demo">
       <div class="demo-wrap">
         <div class="demo-center">
-            <iframe
+          <iframe
             id="demoFrame"
             src="./app/index.html"
             title="RGBio WebGL Demo"
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
             allow="autoplay; fullscreen; gamepad; xr-spatial-tracking"
             scrolling="no"
-            style="overflow:hidden; width:1px; height:1px;"
-            ></iframe>
+            style="overflow:hidden;"
+          ></iframe>
         </div>
         <div class="demo-toolbar">
-        <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to exit fullscreen. Inputs: A and D</span>
-        <div style="display:flex; gap:8px;">
+          <span class="muted">Tip: Click inside the window to focus. Press <kbd>Esc</kbd> to exit fullscreen. Inputs: A and D or touch left/right side of the screen for mobile</span>
+          <div class="btn-group">
             <button class="btn" id="btnReload" type="button">Reload</button>
             <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
             <button class="btn" id="btnMute" type="button" aria-pressed="false" aria-label="Mute">
-                <!-- icon swaps via JS -->
-                <span id="iconMuteOn" style="display:none;" aria-hidden="true">🔇</span>
-                <span id="iconMuteOff" aria-hidden="true">🔊</span>
+              <span id="iconMuteOn" style="display:none;" aria-hidden="true">🔇</span>
+              <span id="iconMuteOff" aria-hidden="true">🔊</span>
             </button>
-            </div>
-        </div>
-        </div>
-    </div>
-    </section>
-
-    <!-- If a project is VR/desktop-only, swap the section above with a video/trailer: -->
-    <!--
-    <section class="card">
-      <div class="grid two">
-        <video controls poster="../../assets/placeholder_poster.jpg"></video>
-        <div>
-          <h2 class="section-title">Trailer</h2>
-          <p class="muted">Short description of what to watch for in the video.</p>
+          </div>
         </div>
       </div>
     </section>
-    -->
 
     <!-- About -->
     <section class="card" id="about">
@@ -144,11 +130,9 @@
       <p>
         I built this Android game in my third year in university. Three balls travel along a 3D curved road defined by a Bézier spline, and the player can rotate them around a shared center to dodge approaching obstacles. 
       </p>
-
       <p>
         The balls Red, Green and Blue can pass through obstacles of the same color. The result is a skill-based experience that rewards quick decisions and feels especially satisfying when clearing difficult sequences.
       </p>
-
       <h4>What I learned</h4>
       <p>
         The toughest challenge was designing the physics: moving the balls smoothly along a changing spline while maintaining the illusion that “gravity” keeps them pinned to the track. 
@@ -185,196 +169,264 @@
 
   <script>
     const frame = document.getElementById('demoFrame');
+    let currentMuted = localStorage.getItem('rgbioMuted') === '1';
+    // --- ONE-SHOT: receive size once, then stop (prevents infinite growth) ---
+    function onUnitySize(ev) {
+      if (ev.source !== frame.contentWindow || !ev.data || !ev.data.__unityCanvasSize__) return;
+      const { w, h } = ev.data;
+      if (!(w > 0 && h > 0)) return;
 
-    // --- Receive messages from the iframe ---
+      // Lock aspect ratio once; let CSS handle future resizing
+      frame.style.width = '100%';
+      frame.style.height = '';
+      frame.style.aspectRatio = `${w} / ${h}`;
+      frame.dataset.aspectSet = '1';
+      frame.style.maxHeight = '90vh'; // visual safety cap
+
+      // Stop listening after first success
+      window.removeEventListener('message', onUnitySize, true);
+
+      // Ask child to stop reporting (defensive)
+      try { frame.contentWindow.postMessage({ __stopUnitySizer__: true }, '*'); } catch {}
+
+      document.getElementById('demoLoading')?.remove();
+    }
+    window.addEventListener('message', onUnitySize, true);
+
+    // --- Also listen for mute state updates (keep your existing behavior) ---
     window.addEventListener('message', (ev) => {
-        if (ev.source !== frame.contentWindow || !ev.data) return;
-
-        // Exact canvas size from inside the Unity page
-        if (ev.data.__unityCanvasSize__) {
-        const { w, h } = ev.data;
-        if (w > 0 && h > 0) {
-            frame.style.width  = w + 'px';
-            frame.style.height = h + 'px';
-        }
-        }
-
-        // Mute state updates (to sync icon)
-        if (typeof ev.data.__unityMuted__ !== 'undefined') {
+      if (ev.source !== frame.contentWindow || !ev.data) return;
+      if (typeof ev.data.__unityMuted__ !== 'undefined') {
         updateMuteIcon(!!ev.data.__unityMuted__);
-        }
+      }
     });
 
-    // --- Inject sizing cleanup (hide Unity footer + report canvas size) ---
+    // --- Inject sizing cleanup (hide Unity footer + one-shot size reporter) ---
     function injectSizerAndCleanup() {
-        try {
+      try {
         const win = frame.contentWindow;
         const doc = frame.contentDocument || win.document;
 
-        // Prevent internal scrollbars
         if (doc?.documentElement) doc.documentElement.style.overflow = 'hidden';
         if (doc?.body) doc.body.style.overflow = 'hidden';
 
-        // Hide Unity template footer/branding/buttons INSIDE the iframe
         const style = doc.createElement('style');
         style.textContent = `
-            #unity-footer, .unity-footer, #unityLogo, #unity-logo,
-            #unity-fullscreen-button, .unity-fullscreen-button,
-            #footer, .footer { display: none !important; }
-            html, body { overflow: hidden !important; }
+          #unity-footer, .unity-footer, #unityLogo, #unity-logo,
+          #unity-fullscreen-button, .unity-fullscreen-button,
+          #footer, .footer { display: none !important; }
+          html, body { overflow: hidden !important; }
         `;
         doc.head.appendChild(style);
 
-        // Inject a helper to report the canvas size only
+        // One-shot size reporter (no ResizeObserver / no polling loop)
         const s = doc.createElement('script');
         s.id = 'unity-size-reporter';
         s.textContent = `
-            (function () {
+          (function () {
+            var stopped = false;
             function canvasEl() {
-                return (
+              return (
                 document.getElementById('unity-canvas') ||
                 (document.getElementById('unityContainer') && document.getElementById('unityContainer').querySelector('canvas')) ||
                 document.querySelector('#unity-container canvas') ||
                 document.querySelector('canvas')
-                );
+              );
             }
-            function send() {
-                var c = canvasEl();
-                if (!c) return;
-                var r = c.getBoundingClientRect();
-                parent.postMessage({ __unityCanvasSize__: true, w: Math.round(r.width), h: Math.round(r.height) }, '*');
+            function sendOnce() {
+              if (stopped) return;
+              var c = canvasEl();
+              if (!c) return;
+              var r = c.getBoundingClientRect();
+              try { parent.postMessage({ __unityCanvasSize__: true, w: Math.round(r.width), h: Math.round(r.height) }, '*'); } catch(e){}
+              stopped = true;
             }
-            window.addEventListener('load', send);
-            send();
-            if (window.ResizeObserver) {
-                var c = canvasEl();
-                if (c) { var ro = new ResizeObserver(send); ro.observe(c); }
-            } else {
-                var tries = 0, id = setInterval(function () {
-                send();
-                if (++tries > 40) clearInterval(id);
-                }, 200);
-            }
-            window.addEventListener('resize', send);
-            })();
+            window.addEventListener('message', function (ev) {
+              var d = ev && ev.data;
+              if (d && d.__stopUnitySizer__) { stopped = true; }
+            }, true);
+            window.addEventListener('load', function(){ setTimeout(sendOnce, 0); });
+            setTimeout(sendOnce, 600); // fallback
+          })();
         `;
         doc.body.appendChild(s);
-        } catch { /* same-origin required; your setup is same-origin */ }
+      } catch {}
     }
 
     // --- Inject audio controller (mute/unmute WebAudio + media) ---
     function injectAudioController() {
-        try {
+      try {
         const win = frame.contentWindow;
         const doc = frame.contentDocument || win.document;
-
         const s = doc.createElement('script');
         s.id = 'unity-audio-controller';
         s.textContent = `
-            (function () {
+          (function () {
             var AC = window.AudioContext || window.webkitAudioContext;
-            var state = { muted: false, contexts: new Set(), mediaEls: new Set() };
+            var state = { muted: false, contexts: new Set(), mediaEls: new Set(), origResume: null };
 
-            function addIfContext(x) {
-                try { if (AC && x && x instanceof AC) state.contexts.add(x); } catch (e) {}
+            // Restore last session mute if present
+            try { state.muted = sessionStorage.getItem('rgbioMuted') === '1'; } catch(e){}
+
+            function remember() {
+              try { sessionStorage.setItem('rgbioMuted', state.muted ? '1' : '0'); } catch(e){}
+              try { parent.postMessage({ __unityMuted__: state.muted }, '*'); } catch(e){}
             }
 
-            // Try common Unity locations
+            function addIfContext(x){ try { if (AC && x && x instanceof AC) state.contexts.add(x); } catch(e){} }
+
+            // Common Unity locations
             if (window.unityInstance?.Module?.audioContext) addIfContext(window.unityInstance.Module.audioContext);
             if (window.Module?.SDL2?.audioContext) addIfContext(window.Module.SDL2.audioContext);
 
-            // Best-effort scan of globals
-            try { for (var k in window) { addIfContext(window[k]); } } catch (e) {}
-
-            // Capture future AudioContexts too
+            // Capture future AudioContexts
             if (AC && !AC.__wrapped) {
-                var OrigAC = AC;
-                var ProxyAC = new Proxy(OrigAC, { construct(target, args) {
+              var OrigAC = AC;
+              var ProxyAC = new Proxy(OrigAC, { construct(target, args) {
                 var ctx = new target(...args);
-                try { state.contexts.add(ctx); } catch (e) {}
+                try { state.contexts.add(ctx); if (state.muted) { ctx.suspend().catch(()=>{}); } } catch(e){}
                 return ctx;
-                }});
-                ProxyAC.__wrapped = true;
-                window.AudioContext = ProxyAC;
-                if (window.webkitAudioContext) window.webkitAudioContext = ProxyAC;
+              }});
+              ProxyAC.__wrapped = true;
+              window.AudioContext = ProxyAC;
+              if (window.webkitAudioContext) window.webkitAudioContext = ProxyAC;
             }
 
-            // Track HTML media elements as a fallback
-            function trackMedia() {
-                document.querySelectorAll('audio,video').forEach(function(el){ state.mediaEls.add(el); });
+            // Block resume while muted (prevents Unity from turning sound back on)
+            (function patchResume(){
+              if (!AC || state.origResume) return;
+              var proto = (AC.prototype || (window.webkitAudioContext && window.webkitAudioContext.prototype));
+              if (!proto || !proto.resume) return;
+              state.origResume = proto.resume;
+              proto.resume = function(){
+                if (state.muted) return Promise.resolve();
+                return state.origResume.apply(this, arguments);
+              };
+            })();
+
+            // Track HTML media elements; when muted, KEEP PLAYING but silent
+            function tagAsBG(el){
+              // Mark background/intro videos so we can safely autoplay them when muted
+              if (!el.hasAttribute('data-allow-when-muted')) el.setAttribute('data-allow-when-muted','');
+              if (!el.hasAttribute('playsinline')) el.setAttribute('playsinline','');
+              if (!el.hasAttribute('muted')) el.muted = true; // property is enough for autoplay
             }
+
+            function trackMedia() {
+              document.querySelectorAll('video, audio').forEach(function(el){
+                if (!state.mediaEls.has(el)) {
+                  state.mediaEls.add(el);
+                  // Heuristic: UI/intro videos often have autoplay/loop or a CSS bg class—allow while muted
+                  if (el.tagName === 'VIDEO' && (el.autoplay || el.loop || /intro|menu|bg|background/i.test(el.className))) {
+                    tagAsBG(el);
+                  }
+                  // Apply current mute mode
+                  applyMuteToElement(el);
+                }
+              });
+            }
+
+            function applyMuteToElement(el){
+              try {
+                if (state.muted) {
+                  // Silence but don't pause (so UI videos stay visible)
+                  el.muted = true;
+                  // Try to start background/menu videos silently (allowed by browsers)
+                  if (el.tagName === 'VIDEO' && (el.autoplay || el.hasAttribute('data-allow-when-muted'))) {
+                    el.play().catch(()=>{ /* ignored; may require user gesture if not muted flag yet */ });
+                  }
+                } else {
+                  // Unmuted: let elements control themselves naturally
+                  // No forced play/pause here
+                }
+              } catch(e){}
+            }
+
+            // Observe DOM for new media
             trackMedia();
             var mo = new MutationObserver(trackMedia);
             mo.observe(document.documentElement, { childList: true, subtree: true });
 
             async function setMuted(m) {
-                state.muted = !!m;
-                state.mediaEls.forEach(function(el){
-                try { el.muted = state.muted; if (state.muted) el.pause(); } catch(e){}
-                });
-                for (var ctx of state.contexts) {
+              state.muted = !!m;
+
+              // HTML media: silent while muted; do NOT pause
+              state.mediaEls.forEach(applyMuteToElement);
+
+              // WebAudio contexts (Unity): suspend/resume
+              for (var ctx of state.contexts) {
                 try { state.muted ? await ctx.suspend() : await ctx.resume(); } catch(e){}
-                }
-                try { parent.postMessage({ __unityMuted__: state.muted }, '*'); } catch(e){}
+              }
+
+              remember();
             }
 
             window.__getMuted = function(){ return !!state.muted; };
             window.__setMuted = function(m){ return setMuted(!!m); };
 
-            // Start unmuted; parent will toggle if needed
-            setMuted(false);
-            })();
+            // Accept parent sync (on reloads)
+            window.addEventListener('message', function(ev){
+              var d = ev && ev.data;
+              if (d && d.__setMuteFromParent__ && typeof d.muted === 'boolean') { setMuted(!!d.muted); }
+            }, true);
+
+            // Apply initial state
+            setMuted(state.muted);
+          })();
         `;
         doc.body.appendChild(s);
-        } catch {}
+
+      } catch {}
     }
 
     // --- Initialize on iframe load ---
     frame.addEventListener('load', () => {
-        injectSizerAndCleanup();
-        injectAudioController();
+      injectSizerAndCleanup();
+      injectAudioController();
+      // Tell child what the current mute is (covers restarts)
+      try { frame.contentWindow.postMessage({ __setMuteFromParent__: true, muted: currentMuted }, '*'); } catch {}
     });
+
 
     // --- Toolbar controls ---
-    // Reload
     document.getElementById('btnReload')?.addEventListener('click', () => {
-        try { frame.contentWindow.location.reload(); } catch {}
+      try { frame.contentWindow.location.reload(); } catch {}
     });
 
-    // Fullscreen
     document.getElementById('btnFullscreen')?.addEventListener('click', async () => {
-        try {
+      try {
         const win = frame.contentWindow;
         const doc = frame.contentDocument || win.document;
         if (win && typeof win.unityInstance?.SetFullscreen === 'function') {
-            win.unityInstance.SetFullscreen(1);
-            return;
+          win.unityInstance.SetFullscreen(1);
+          return;
         }
         const canvas =
-            doc.getElementById('unity-canvas') ||
-            (doc.getElementById('unityContainer') && doc.getElementById('unityContainer').querySelector('canvas')) ||
-            doc.querySelector('#unity-container canvas') ||
-            doc.querySelector('canvas');
+          doc.getElementById('unity-canvas') ||
+          (doc.getElementById('unityContainer') && doc.getElementById('unityContainer').querySelector('canvas')) ||
+          doc.querySelector('#unity-container canvas') ||
+          doc.querySelector('canvas');
         if (canvas?.requestFullscreen) await canvas.requestFullscreen();
         else if (doc.documentElement.requestFullscreen) await doc.documentElement.requestFullscreen();
-        } catch {}
+      } catch {}
     });
 
-    // Mute / Unmute
     const btnMute = document.getElementById('btnMute');
-    const iconOn  = document.getElementById('iconMuteOn');  // 🔇
-    const iconOff = document.getElementById('iconMuteOff'); // 🔊
+    const iconOn  = document.getElementById('iconMuteOn');
+    const iconOff = document.getElementById('iconMuteOff');
 
     function updateMuteIcon(muted) {
-        if (!btnMute) return;
-        btnMute.setAttribute('aria-pressed', String(muted));
-        btnMute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
-        if (iconOn)  iconOn.style.display  = muted ? '' : 'none';
-        if (iconOff) iconOff.style.display = muted ? 'none' : '';
+      if (!btnMute) return;
+      btnMute.setAttribute('aria-pressed', String(muted));
+      btnMute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+      if (iconOn)  iconOn.style.display  = muted ? '' : 'none';
+      if (iconOff) iconOff.style.display = muted ? 'none' : '';
+      currentMuted = !!muted;
+      try { localStorage.setItem('rgbioMuted', currentMuted ? '1' : '0'); } catch {}
     }
 
     btnMute?.addEventListener('click', async () => {
-        try {
+      try {
         const win = frame.contentWindow;
         const getMuted = win.__getMuted;
         const setMuted = win.__setMuted;
@@ -382,11 +434,8 @@
         const isMuted = typeof getMuted === 'function' ? !!getMuted() : false;
         await setMuted(!isMuted);
         updateMuteIcon(!isMuted);
-        } catch {}
+      } catch {}
     });
-    </script>
-
-
-
+  </script>
 </body>
 </html>
